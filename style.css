@@ -1,27 +1,31 @@
+/* === RESET === */
 * {
     margin: 0;
     padding: 0;
     box-sizing: border-box;
 }
 
+/* === BASE === */
 body {
     font-family: "Segoe UI", sans-serif;
-    background-color: #0d1b22;
-    color: #d4e4ec;
+    background-color: #0f1115; /* Deep dark background */
+    color: #ffffff; /* Default text white */
     min-height: 100vh;
     line-height: 1.8;
 }
 
+/* === LAYOUT === */
 .layout {
     display: flex;
     min-height: 100vh;
 }
 
+/* === SIDEBAR === */
 .sidebar {
     width: 250px;
     min-width: 220px;
-    background-color: #111f27;
-    border-right: 2px solid #2e5466;
+    background-color: #16181d; /* Slightly lighter dark for contrast */
+    border-right: 1px solid #2a2d35;
     padding: 36px 20px;
     display: flex;
     flex-direction: column;
@@ -37,7 +41,7 @@ body {
     height: 110px;
     border-radius: 50%;
     object-fit: cover;
-    border: 3px solid #2e5466;
+    border: 2px solid #333;
     margin: 0 auto 14px auto;
     display: block;
 }
@@ -54,13 +58,12 @@ body {
 
 .tagline {
     font-size: 0.82rem;
-    color: #7a9fb0;
+    color: #a0a5b0;
 }
 
 .divider {
     border: none;
-    border-top: 1px solid #2e5466;
-    opacity: 0.5;
+    border-top: 1px solid #2a2d35;
 }
 
 .sidebar-info {
@@ -68,7 +71,7 @@ body {
     flex-direction: column;
     gap: 10px;
     font-size: 0.88rem;
-    color: #9abccc;
+    color: #d0d5e0;
 }
 
 .sidebar-links {
@@ -81,61 +84,60 @@ body {
     display: block;
     text-align: center;
     text-decoration: none;
-    color: #d4e4ec;
+    color: #ffffff; /* White by default */
     font-size: 0.9rem;
     font-weight: 600;
     padding: 8px 12px;
-    border: 1px solid #2e5466;
+    border: 1px solid #333;
     border-radius: 6px;
-    transition:
-        background 0.25s,
-        color 0.25s;
+    transition: all 0.25s;
 }
 
+/* Hovering side links turns them #2e5466 */
 .sidebar-links a:hover {
-    background-color: #2e5466;
-    color: #ffffff;
+    color: #2e5466;
+    border-color: #2e5466;
 }
 
+/* === MAIN === */
 .main {
     flex: 1;
     display: flex;
     flex-direction: column;
 }
 
+/* === TAB NAV === */
 .tabs {
     display: flex;
     flex-wrap: wrap;
-    background-color: #0d1b22;
-    border-bottom: 2px solid #2e5466;
+    background-color: #0f1115;
+    border-bottom: 1px solid #2a2d35;
 }
 
 .tab-btn {
     background: none;
     border: none;
-    color: #7a9fb0;
+    color: #a0a5b0; /* Light gray for unselected */
     padding: 15px 26px;
     font-size: 0.92rem;
     font-weight: 600;
     cursor: pointer;
     border-bottom: 3px solid transparent;
-    transition:
-        color 0.25s,
-        border-color 0.25s,
-        background 0.25s;
+    transition: all 0.25s;
 }
 
+/* Hovering tabs turns them #2e5466 */
 .tab-btn:hover {
-    color: #d4e4ec;
-    background-color: #111f27;
+    color: #2e5466;
 }
 
+/* Active tab turns #2e5466 */
 .tab-btn.active {
-    color: #ffffff;
+    color: #2e5466;
     border-bottom: 3px solid #2e5466;
-    background-color: #111f27;
 }
 
+/* === TAB CONTENT === */
 .tab-content {
     flex: 1;
     padding: 44px 48px;
@@ -152,28 +154,28 @@ body {
 
 .tab-panel h2 {
     font-size: 1.6rem;
-    color: #7abcd4;
-    border-left: 4px solid #2e5466;
-    padding-left: 14px;
+    color: #2e5466; /* Section headers use your color */
     margin-bottom: 20px;
 }
 
 .tab-panel p {
     font-size: 0.97rem;
-    color: #b0ccd8;
+    color: #d0d5e0;
     margin-bottom: 14px;
     max-width: 700px;
 }
 
+/* === FOOTER === */
 footer {
     text-align: center;
     padding: 18px;
-    background-color: #0a1520;
-    color: #3d6478;
+    background-color: #16181d;
+    color: #666;
     font-size: 0.82rem;
-    border-top: 1px solid #1e3a4a;
+    border-top: 1px solid #2a2d35;
 }
 
+/* === FADE ANIMATION === */
 @keyframes fadeIn {
     from {
         opacity: 0;
@@ -185,6 +187,7 @@ footer {
     }
 }
 
+/* === RESPONSIVE === */
 @media (max-width: 680px) {
     .layout {
         flex-direction: column;
@@ -193,6 +196,7 @@ footer {
         width: 100%;
         height: auto;
         position: relative;
+        padding: 24px 20px;
     }
     .tab-content {
         padding: 24px 20px;
