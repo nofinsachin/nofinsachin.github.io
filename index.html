@@ -36,7 +36,6 @@
     <button class="tab-btn" data-tab="research">Research</button>
     <button class="tab-btn" data-tab="projects">Projects</button>
     <button class="tab-btn" data-tab="tutorials">Tutorials</button>
-    <button class="tab-btn" data-tab="wiki">Wiki</button>
   </nav>
 
   <!-- TAB PANELS -->
@@ -69,20 +68,53 @@
 
         </section>
 
-    <section id="projects" class="tab-panel">
-      <h2>Projects</h2>
-      <p>Hobby builds, experiments, and side projects — coming soon.</p>
-    </section>
+        <section id="projects" class="tab-panel"> <h2>Projects</h2> <p style="margin-bottom: 24px;">A collection of my hobby builds, experiments, and open-source contributions.</p>
 
-    <section id="tutorials" class="tab-panel">
-      <h2>Tutorials</h2>
-      <p>Guides and tutorials I've written — coming soon.</p>
-    </section>
+              <!-- Projects Grid -->
+              <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(280px, 1fr)); gap: 20px;">
 
-    <section id="wiki" class="tab-panel">
-      <h2>Wiki</h2>
-      <p>Personal knowledge base and reference notes — coming soon.</p>
-    </section>
+                <!-- Project Card 1 -->
+                <div style="background-color: #16181d; border: 1px solid #2a2d35; border-radius: 8px; padding: 20px; transition: transform 0.2s;">
+                  <h3 style="color: #ffffff; font-size: 1.2rem; margin-bottom: 8px;">Personal Knowledge Base</h3>
+                  <p style="font-size: 0.9rem; color: #d0d5e0; margin-bottom: 16px;">A static site built with HTML/CSS to document my research, tutorials, and thoughts (You are looking at it!).</p>
+                  <div style="display: flex; gap: 10px;">
+                    <span style="background-color: #2a2d35; color: #3ec8e4; padding: 4px 10px; border-radius: 4px; font-size: 0.75rem; font-weight: bold;">HTML/CSS</span>
+                    <span style="background-color: #2a2d35; color: #3ec8e4; padding: 4px 10px; border-radius: 4px; font-size: 0.75rem; font-weight: bold;">GitHub Pages</span>
+                  </div>
+                </div>
+
+                <!-- Project Card 2 -->
+                <div style="background-color: #16181d; border: 1px solid #2a2d35; border-radius: 8px; padding: 20px; transition: transform 0.2s;">
+                  <h3 style="color: #ffffff; font-size: 1.2rem; margin-bottom: 8px;">Project Name Here</h3>
+                  <p style="font-size: 0.9rem; color: #d0d5e0; margin-bottom: 16px;">A brief description of what the project does, the problem it solves, or what you learned building it.</p>
+                  <div style="display: flex; gap: 10px;">
+                    <span style="background-color: #2a2d35; color: #3ec8e4; padding: 4px 10px; border-radius: 4px; font-size: 0.75rem; font-weight: bold;">Python</span>
+                    <span style="background-color: #2a2d35; color: #3ec8e4; padding: 4px 10px; border-radius: 4px; font-size: 0.75rem; font-weight: bold;">Linux</span>
+                  </div>
+                </div>
+
+              </div>
+            </section>
+
+            <section id="tutorials" class="tab-panel"> <h2>Tutorials</h2> <p style="margin-bottom: 24px;">Technical guides and step-by-step tutorials I've written.</p>
+
+                  <!-- Tutorial Card 1 -->
+                  <div style="background-color: #16181d; border: 1px solid #2a2d35; border-left: 4px solid #3ec8e4; border-radius: 8px; padding: 24px; margin-bottom: 24px;">
+                    <h3 style="color: #ffffff; font-size: 1.3rem; margin-bottom: 8px;">Setting up a Production-Ready PostgreSQL Cluster in Kubernetes</h3>
+
+                    <p style="font-size: 0.85rem; color: #a0a5b0; margin-bottom: 16px;">
+                      <span style="color: #3ec8e4; font-weight: bold;">Kubernetes</span> · <span style="color: #3ec8e4; font-weight: bold;">PostgreSQL</span> · <span style="color: #3ec8e4; font-weight: bold;">DevOps</span>
+                    </p>
+
+                    <p style="color: #d0d5e0; margin-bottom: 20px; line-height: 1.7;">
+                      A comprehensive guide on deploying a highly available, production-grade Postgres database inside a Kubernetes cluster. This tutorial covers StatefulSets, Persistent Volumes, automated backups, and handling failovers gracefully.
+                    </p>
+
+                    <!-- Placeholder link for when you write the actual tutorial page -->
+                    <a href="#" style="color: #16181d; background-color: #3ec8e4; text-decoration: none; font-weight: 600; padding: 8px 16px; border-radius: 4px; display: inline-block; font-size: 0.9rem;">Read Tutorial →</a>
+                  </div>
+
+                </section>
 
   </div>
 </div>
