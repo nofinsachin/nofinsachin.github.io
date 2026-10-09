@@ -1,122 +1,162 @@
-<!DOCTYPE html> <html lang="en"> <head> <meta charset="UTF-8" /> <meta name="viewport" content="width=device-width, initial-scale=1.0"/> <title>Sachin Kumar N N</title> <link rel="stylesheet" href="style.css" /> </head> <body>
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Sachin Kumar N N</title>
+
+  <!-- Apply saved theme before paint to avoid a flash. Dark is default. -->
+  <script>
+    (function () {
+      try {
+        if (localStorage.getItem("theme") === "light") {
+          document.documentElement.setAttribute("data-theme", "light");
+        }
+      } catch (e) {}
+    })();
+  </script>
+
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link
+    href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&family=JetBrains+Mono:wght@400;500&display=swap"
+    rel="stylesheet"
+  />
+  <link rel="stylesheet" href="style.css" />
+</head>
+<body>
 
 <div class="layout">
 
-<!-- LEFT SIDEBAR -->
-<aside class="sidebar">
-  <div class="profile">
-    <img src="assets/images/profile.jpg" alt="Sachin Kumar N N" class="avatar" />
-    <h1>Sachin Kumar N N</h1>
-    <p class="tagline">Travelling the roads less travelled</p>
-  </div>
+  <!-- LEFT SIDEBAR -->
+  <aside class="sidebar">
+    <div class="profile">
+      <img
+        src="assets/images/profile.jpg"
+        alt="Sachin Kumar N N"
+        class="avatar"
+        onerror="this.style.display='none';document.getElementById('avatar-fallback').style.display='flex';"
+      />
+      <div class="avatar-fallback" id="avatar-fallback">SK</div>
+      <h1>Sachin Kumar N N</h1>
+      <p class="tagline">Travelling the roads less travelled</p>
+    </div>
 
-  <hr class="divider" />
+    <hr class="divider" />
 
-  <div class="sidebar-info">
-    <p>📍 Utrecht, Netherlands</p>
-    <p>📖 Lifelong Learner</p>
-  </div>
+    <div class="sidebar-info">
+      <p>📍 Utrecht, Netherlands</p>
+      <p>📖 Lifelong Learner</p>
+    </div>
 
-  <hr class="divider" />
+    <hr class="divider" />
 
-  <div class="sidebar-links">
-    <a href="https://github.com/nofinsachin" target="_blank">GitHub</a>
-    <a href="mailto:sachin@example.com">Email</a>
-  </div>
-</aside>
+    <div class="sidebar-links">
+      <a href="https://github.com/nofinsachin" target="_blank" rel="noopener">GitHub</a>
+      <a href="mailto:sachin@example.com">Email</a>
+    </div>
 
-<!-- MAIN CONTENT -->
-<div class="main">
+    <hr class="divider" />
 
-  <!-- TOP TAB NAV -->
-  <nav class="tabs">
-    <button class="tab-btn active" data-tab="about">About</button>
-    <button class="tab-btn" data-tab="research">Research</button>
-    <button class="tab-btn" data-tab="projects">Projects</button>
-    <button class="tab-btn" data-tab="tutorials">Tutorials</button>
-  </nav>
+    <button class="theme-toggle" id="theme-toggle" aria-label="Toggle colour theme">
+      <span id="theme-icon"></span>
+      <span id="theme-label">Light</span>
+    </button>
+  </aside>
 
-  <!-- TAB PANELS -->
-  <div class="tab-content">
+  <!-- MAIN CONTENT -->
+  <div class="main">
 
-    <section id="about" class="tab-panel active">
-      <h2>About Me</h2>
-      <p>Hello there!, Welcome to my personal space. I document my experiences, research, hobby projects, tutorials, and things I find worth sharing.</p>
-      <p>I enjoy exploring ideas across domains — from systems and software to science and philosophy. This site is my living notebook</p>
-    </section>
+    <!-- TOP TAB NAV -->
+    <nav class="tabs">
+      <button class="tab-btn active" data-tab="about">About</button>
+      <button class="tab-btn" data-tab="research">Research</button>
+      <button class="tab-btn" data-tab="projects">Projects</button>
+      <button class="tab-btn" data-tab="tutorials">Tutorials</button>
+    </nav>
 
-    <section id="research" class="tab-panel"> <h2>Research</h2>
+    <!-- TAB PANELS -->
+    <div class="tab-content">
 
-          <!-- Research Item 1 -->
-          <div style="background-color: #16181d; border: 1px solid #2a2d35; border-left: 4px solid #3ec8e4; border-radius: 8px; padding: 24px; margin-bottom: 24px;">
-            <h3 style="color: #ffffff; font-size: 1.3rem; margin-bottom: 8px;">The "Not Stoic" Project</h3>
-            <p style="font-size: 0.85rem; color: #3ec8e4; margin-bottom: 16px; font-weight: 600;">Status: Informal Research · Ongoing</p>
+      <!-- ABOUT -->
+      <section id="about" class="tab-panel active">
+        <span class="eyebrow reveal">01 / About</span>
+        <h2 class="reveal">About Me</h2>
+        <p class="reveal">Hello there! Welcome to my personal space. I document my experiences, research, hobby projects, tutorials, and things I find worth sharing.</p>
+        <p class="reveal">I enjoy exploring ideas across domains — from systems and software to science and philosophy. This site is my living notebook.</p>
+      </section>
 
-            <p>I am currently investigating the modern misapplication of the terms <strong>"Stoicism"</strong> and <strong>"stoic."</strong> In recent years, these concepts have been heavily commodified and misunderstood in popular culture.</p>
+      <!-- RESEARCH -->
+      <section id="research" class="tab-panel">
+        <span class="eyebrow reveal">02 / Research</span>
+        <h2 class="reveal">Research</h2>
 
-            <p>My core hypothesis is that this trend stems from an innate human need to appear polished, resilient, and unbothered on the outside, without actually making the difficult, underlying changes to one's character, virtues, and personality.</p>
+        <div class="card reveal">
+          <h3>The "Not Stoic" Project</h3>
+          <p class="meta card-status">Status: Informal Research · Ongoing</p>
 
-            <h4 style="color: #ffffff; margin-top: 20px; font-size: 1.05rem; margin-bottom: 10px;">Key Areas of Exploration:</h4>
-            <ul style="margin-left: 24px; color: #d0d5e0; line-height: 1.8;">
-              <li><strong>Aesthetic vs. Philosophy:</strong> How Stoicism became a superficial "life hack" rather than a rigorous framework for living.</li>
-              <li><strong>Emotional Suppression:</strong> The dangerous conflation of merely hiding your feelings with actual emotional regulation.</li>
-              <li><strong>The Polish vs. The Core:</strong> Why it is easier for people to adopt the <em>appearance</em> of a Stoic than to do the internal work required to build a solid character.</li>
-            </ul>
+          <p>I am currently investigating the modern misapplication of the terms <strong>"Stoicism"</strong> and <strong>"stoic."</strong> In recent years, these concepts have been heavily commodified and misunderstood in popular culture.</p>
+
+          <p>My core hypothesis is that this trend stems from an innate human need to appear polished, resilient, and unbothered on the outside, without actually making the difficult, underlying changes to one's character, virtues, and personality.</p>
+
+          <h4>Key Areas of Exploration</h4>
+          <ul>
+            <li><strong>Aesthetic vs. Philosophy:</strong> How Stoicism became a superficial "life hack" rather than a rigorous framework for living.</li>
+            <li><strong>Emotional Suppression:</strong> The dangerous conflation of merely hiding your feelings with actual emotional regulation.</li>
+            <li><strong>The Polish vs. The Core:</strong> Why it is easier for people to adopt the <em>appearance</em> of a Stoic than to do the internal work required to build a solid character.</li>
+          </ul>
+        </div>
+      </section>
+
+      <!-- PROJECTS -->
+      <section id="projects" class="tab-panel">
+        <span class="eyebrow reveal">03 / Projects</span>
+        <h2 class="reveal">Projects</h2>
+        <p class="reveal">A collection of my hobby builds, experiments, and open-source contributions.</p>
+
+        <div class="grid">
+          <div class="card reveal">
+            <h3>Personal Knowledge Base</h3>
+            <p>A static site built with HTML/CSS to document my research, tutorials, and thoughts (you are looking at it!).</p>
+            <div class="tags">
+              <span class="tag">HTML/CSS</span>
+              <span class="tag">GitHub Pages</span>
+            </div>
           </div>
 
-        </section>
+          <div class="card reveal">
+            <h3>Project Name Here</h3>
+            <p>A brief description of what the project does, the problem it solves, or what you learned building it.</p>
+            <div class="tags">
+              <span class="tag">Python</span>
+              <span class="tag">Linux</span>
+            </div>
+          </div>
+        </div>
+      </section>
 
-        <section id="projects" class="tab-panel"> <h2>Projects</h2> <p style="margin-bottom: 24px;">A collection of my hobby builds, experiments, and open-source contributions.</p>
+      <!-- TUTORIALS -->
+      <section id="tutorials" class="tab-panel">
+        <span class="eyebrow reveal">04 / Tutorials</span>
+        <h2 class="reveal">Tutorials</h2>
+        <p class="reveal">Technical guides and step-by-step tutorials I've written.</p>
 
-              <!-- Projects Grid -->
-              <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(280px, 1fr)); gap: 20px;">
+        <div class="card reveal">
+          <h3>Setting up a Production-Ready PostgreSQL Cluster in Kubernetes</h3>
+          <p class="meta">Kubernetes · PostgreSQL · DevOps</p>
+          <p>A comprehensive guide on deploying a highly available, production-grade Postgres database inside a Kubernetes cluster. This tutorial covers StatefulSets, Persistent Volumes, automated backups, and handling failovers gracefully.</p>
+          <a href="#" class="btn-link">Read Tutorial →</a>
+        </div>
+      </section>
 
-                <!-- Project Card 1 -->
-                <div style="background-color: #16181d; border: 1px solid #2a2d35; border-radius: 8px; padding: 20px; transition: transform 0.2s;">
-                  <h3 style="color: #ffffff; font-size: 1.2rem; margin-bottom: 8px;">Personal Knowledge Base</h3>
-                  <p style="font-size: 0.9rem; color: #d0d5e0; margin-bottom: 16px;">A static site built with HTML/CSS to document my research, tutorials, and thoughts (You are looking at it!).</p>
-                  <div style="display: flex; gap: 10px;">
-                    <span style="background-color: #2a2d35; color: #3ec8e4; padding: 4px 10px; border-radius: 4px; font-size: 0.75rem; font-weight: bold;">HTML/CSS</span>
-                    <span style="background-color: #2a2d35; color: #3ec8e4; padding: 4px 10px; border-radius: 4px; font-size: 0.75rem; font-weight: bold;">GitHub Pages</span>
-                  </div>
-                </div>
-
-                <!-- Project Card 2 -->
-                <div style="background-color: #16181d; border: 1px solid #2a2d35; border-radius: 8px; padding: 20px; transition: transform 0.2s;">
-                  <h3 style="color: #ffffff; font-size: 1.2rem; margin-bottom: 8px;">Project Name Here</h3>
-                  <p style="font-size: 0.9rem; color: #d0d5e0; margin-bottom: 16px;">A brief description of what the project does, the problem it solves, or what you learned building it.</p>
-                  <div style="display: flex; gap: 10px;">
-                    <span style="background-color: #2a2d35; color: #3ec8e4; padding: 4px 10px; border-radius: 4px; font-size: 0.75rem; font-weight: bold;">Python</span>
-                    <span style="background-color: #2a2d35; color: #3ec8e4; padding: 4px 10px; border-radius: 4px; font-size: 0.75rem; font-weight: bold;">Linux</span>
-                  </div>
-                </div>
-
-              </div>
-            </section>
-
-            <section id="tutorials" class="tab-panel"> <h2>Tutorials</h2> <p style="margin-bottom: 24px;">Technical guides and step-by-step tutorials I've written.</p>
-
-                  <!-- Tutorial Card 1 -->
-                  <div style="background-color: #16181d; border: 1px solid #2a2d35; border-left: 4px solid #3ec8e4; border-radius: 8px; padding: 24px; margin-bottom: 24px;">
-                    <h3 style="color: #ffffff; font-size: 1.3rem; margin-bottom: 8px;">Setting up a Production-Ready PostgreSQL Cluster in Kubernetes</h3>
-
-                    <p style="font-size: 0.85rem; color: #a0a5b0; margin-bottom: 16px;">
-                      <span style="color: #3ec8e4; font-weight: bold;">Kubernetes</span> · <span style="color: #3ec8e4; font-weight: bold;">PostgreSQL</span> · <span style="color: #3ec8e4; font-weight: bold;">DevOps</span>
-                    </p>
-
-                    <p style="color: #d0d5e0; margin-bottom: 20px; line-height: 1.7;">
-                      A comprehensive guide on deploying a highly available, production-grade Postgres database inside a Kubernetes cluster. This tutorial covers StatefulSets, Persistent Volumes, automated backups, and handling failovers gracefully.
-                    </p>
-
-                    <!-- Placeholder link for when you write the actual tutorial page -->
-                    <a href="#" style="color: #16181d; background-color: #3ec8e4; text-decoration: none; font-weight: 600; padding: 8px 16px; border-radius: 4px; display: inline-block; font-size: 0.9rem;">Read Tutorial →</a>
-                  </div>
-
-                </section>
-
+    </div>
   </div>
 </div>
-</div>
 
-<!-- FOOTER --> <footer> <p>© 2026 Sachin Kumar N N · Built with GitHub Pages</p> </footer>
-<script src="script.js"></script> </body] </html>
+<footer>
+  <p>© 2026 Sachin Kumar N N · Built with GitHub Pages</p>
+</footer>
+
+<script src="script.js"></script>
+</body>
+</html>
