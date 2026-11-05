@@ -1,0 +1,299 @@
+/* ============================================================
+   TOKENS
+   ============================================================ */
+:root {
+  --bg:    #000000;
+  --text:  #EDEDED;
+  --muted: #8A8A8A;
+  --s-2: 16px;
+  --font:  "JetBrains Mono", ui-monospace, SFMono-Regular, Menlo, Consolas, monospace;
+}
+
+* { box-sizing: border-box; }
+html, body { height: 100%; margin: 0; }
+
+body {
+  background: var(--bg);
+  color: var(--text);
+  font-family: var(--font);
+  -webkit-font-smoothing: antialiased;
+}
+
+/* ============================================================
+   SHARED ATMOSPHERE (fixed, behind every spread)
+   - glyph flow (#bg-canvas), vignette, film grain.
+   ============================================================ */
+#bg-canvas {
+  position: fixed; inset: 0; width: 100%; height: 100%;
+  display: block; z-index: 0;
+}
+.vignette {
+  position: fixed; inset: 0; z-index: 3; pointer-events: none;
+  background: radial-gradient(circle at 50% 50%,
+               rgba(0,0,0,0) 14%, rgba(0,0,0,0.98) 100%);
+}
+.grain {
+  position: fixed; inset: 0; z-index: 4; pointer-events: none;
+  background: url("data:image/svg+xml,%3Csvg viewBox='0 0 600 600' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='2' numOctaves='3' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E");
+  filter: contrast(100%) brightness(140%) grayscale(1) opacity(0.06);
+  mix-blend-mode: screen;
+}
+
+/* ============================================================
+   TOP TABS — deliberately invisible as a "bar": no background,
+   no border, no blur. Just quiet muted labels floating on the
+   night backdrop so they blend perfectly with it. The active
+   tab is off-white with a thin underline.
+   ============================================================ */
+.tabs {
+  position: fixed; top: 0; left: 0; right: 0; z-index: 5;
+  display: flex; gap: 2.4rem;
+  padding: 1.6rem 2.2rem;
+  background: none; border: none;   /* no visible bar */
+  pointer-events: none;             /* only the links are clickable */
+}
+.tab {
+  pointer-events: auto;
+  position: relative;
+  color: var(--muted);
+  font-size: 0.82rem;
+  letter-spacing: 0.16em;
+  text-transform: uppercase;
+  text-decoration: none;
+  padding: 2px 0;
+  transition: color 0.25s ease;
+}
+.tab:hover { color: var(--text); text-decoration: none; }
+.tab.is-active { color: var(--text); }
+.tab.is-active::after {
+  content: ""; position: absolute;
+  left: 0; right: 0; bottom: -4px; height: 1px;
+  background: var(--text);
+}
+
+/* ============================================================
+   THE BOOK — a vertical, scroll-snapping stack of spreads.
+   Each .spread is one full-viewport "two-page" opening.
+   ============================================================ */
+.book {
+  position: relative; z-index: 2;   /* above bg-canvas, below vignette */
+  height: 100vh; overflow-y: scroll;
+  scroll-snap-type: y mandatory;
+  scroll-behavior: smooth;
+}
+.spread {
+  position: relative;
+  height: 100vh;
+  scroll-snap-align: start;
+  display: grid; grid-template-columns: 1fr 1fr;  /* left + right page */
+}
+
+/* Per-spread LEFT-PAGE canvas (the shape/hourglass/map art). It fills the
+   spread; the drawing code confines the art to the left page. */
+.spread__canvas {
+  position: absolute; inset: 0; width: 100%; height: 100%;
+  z-index: 1; pointer-events: none;
+}
+/* Interactive left-page canvases (shapes, map) capture hover/click.
+   touch-action:pan-y keeps vertical scroll-snap working on touch devices. */
+.spread__canvas--interactive {
+  pointer-events: auto;
+  touch-action: pan-y;
+  cursor: default;
+}
+
+/* ============================================================
+   SHIMMER POLYHEDRON (Spread 2) — adapted from shimmer.css.
+   A slowly spinning, wobbling, iridescent-shimmer dodecahedron.
+   Scoped under .shimmer-stage so it stays on the LEFT PAGE.
+   The whole scene scales with .shimmer-stage font-size.
+   ============================================================ */
+.shimmer-stage {
+  position: absolute; z-index: 1;
+  top: 0; bottom: 0; left: 0; width: 50%;      /* LEFT PAGE */
+  display: grid; place-items: center;
+  overflow: hidden;
+  pointer-events: none;
+  /* One knob scales the whole em-based scene so it fits the left page. */
+  font-size: clamp(1.7px, 0.68vmin, 3.8px);
+  /* subtle hue breathing, as in the reference */
+  animation: shimmerHue 2s ease-in-out infinite alternate;
+}
+@keyframes shimmerHue {
+  0%   { filter: saturate(3) contrast(1.4) hue-rotate(180deg); }
+  100% { filter: saturate(4) contrast(1.8) hue-rotate(360deg); }
+}
+
+.shimmer-stage * { position: absolute; transform-style: preserve-3d; }
+
+.shimmer-stage .scene {
+  position: relative;
+  place-self: center;
+  width: 100em; aspect-ratio: 1;
+  perspective: 250em;
+}
+.shimmer-stage .pivot,
+.shimmer-stage .starHedron { inset: 0; }
+
+.shimmer-stage .pivot { animation: shimmerWobble 8s ease-in-out alternate infinite; }
+@keyframes shimmerWobble {
+  0%   { rotate: x -30deg; }
+  100% { rotate: x 30deg; }
+}
+
+.shimmer-stage .starHedron {
+  display: grid; place-items: center;
+  animation: shimmerSpin 9s linear infinite;
+}
+@keyframes shimmerSpin {
+  0%   { rotate: y 1deg; }
+  100% { rotate: y 361deg; }
+}
+
+.shimmer-stage .pentagon {
+  --pentaW: calc(sin(atan(1/(cos(36deg) + .5))) * 100);
+  width: calc(var(--pentaW)*1em);
+  aspect-ratio: 1;
+  --pushZ: calc(cos(atan(1/(cos(36deg) + .5))) * 50);
+  display: grid;
+}
+.shimmer-stage .pentagon::before,
+.shimmer-stage .triangle {
+  background-image: linear-gradient(23deg, #ffeeff02 20%, #eeffff28, #ffe1, #efea 85%);
+  background-size: 500% 500%;
+  animation: shimmer 1s linear alternate infinite;
+}
+.shimmer-stage .pentagon::before {
+  content: ''; position: absolute; inset: 0;
+  clip-path: polygon(
+    calc(50%*(1 + sin(72deg*0))) calc(50%*(1 + cos(72deg*0))),
+    calc(50%*(1 + sin(72deg*1))) calc(50%*(1 + cos(72deg*1))),
+    calc(50%*(1 + sin(72deg*2))) calc(50%*(1 + cos(72deg*2))),
+    calc(50%*(1 + sin(72deg*3))) calc(50%*(1 + cos(72deg*3))),
+    calc(50%*(1 + sin(72deg*4))) calc(50%*(1 + cos(72deg*4))),
+    calc(50%*(1 + cos(36deg)*sin(72deg*4.5))) calc(50%*(1 + cos(36deg)*cos(72deg*4.5))),
+    calc(50%*(1 + cos(36deg)*sin(72deg*3.5))) calc(50%*(1 + cos(36deg)*cos(72deg*3.5))),
+    calc(50%*(1 + cos(36deg)*sin(72deg*2.5))) calc(50%*(1 + cos(36deg)*cos(72deg*2.5))),
+    calc(50%*(1 + cos(36deg)*sin(72deg*1.5))) calc(50%*(1 + cos(36deg)*cos(72deg*1.5))),
+    calc(50%*(1 + cos(36deg)*sin(72deg*.5))) calc(50%*(1 + cos(36deg)*cos(72deg*.5))),
+    calc(50%*(1 + cos(36deg)*sin(72deg*4.5))) calc(50%*(1 + cos(36deg)*cos(72deg*4.5)))
+  );
+  padding: 1px;
+  animation-delay: calc(-.415s*var(--step));
+  filter: hue-rotate(calc(var(--step)*61deg));
+}
+
+.shimmer-stage .side {
+  transform: rotateY(calc(72deg*var(--step))) rotateX(calc(atan(.5) + 90deg - (var(--dir)*90deg))) translateZ(calc(var(--pushZ)*1em));
+}
+.shimmer-stage .lid {
+  transform: rotateX(calc(90deg*var(--dir))) translateZ(calc(var(--pushZ)*1em)) rotate(36deg);
+}
+
+.shimmer-stage .pentagon:nth-child(1), .shimmer-stage .pentagon:nth-child(2)  { --step: 0; }
+.shimmer-stage .pentagon:nth-child(3), .shimmer-stage .pentagon:nth-child(4)  { --step: 1; }
+.shimmer-stage .pentagon:nth-child(5), .shimmer-stage .pentagon:nth-child(6)  { --step: 2; }
+.shimmer-stage .pentagon:nth-child(7), .shimmer-stage .pentagon:nth-child(8)  { --step: 3; }
+.shimmer-stage .pentagon:nth-child(9), .shimmer-stage .pentagon:nth-child(10) { --step: 4; }
+.shimmer-stage .pentagon:nth-child(11), .shimmer-stage .pentagon:nth-child(12){ --step: 5; }
+.shimmer-stage .pentagon:nth-child(odd)  { --dir: 1; }
+.shimmer-stage .pentagon:nth-child(even) { --dir: -1; }
+
+.shimmer-stage .triangle {
+  top: 50%; justify-self: center;
+  width: calc(cos(36deg)*sin(36deg)*var(--pentaW)*1em);
+  --baseH: calc(cos(36deg)*cos(36deg)*var(--pentaW)*.5);
+  --pyramidAngle: atan(.5);
+  height: calc(1/sin(var(--pyramidAngle)) * var(--baseH)*.5em);
+  clip-path: polygon(50% 0, 100% 100%, 0 100%);
+  transform-origin: 50% 0;
+  transform: translateZ(calc(tan(var(--pyramidAngle))*var(--baseH)*1em)) rotate(calc(var(--triStep)*72deg)) rotateX(calc(-1*(var(--pyramidAngle))));
+  animation-delay: calc(-.32s*var(--triStep) - .87s*var(--step));
+  filter: hue-rotate(calc(var(--triStep)*43deg) + var(--step)*67deg);
+  padding: 1px;
+}
+.shimmer-stage .triangle:nth-child(1) { --triStep: 0; }
+.shimmer-stage .triangle:nth-child(2) { --triStep: 1; }
+.shimmer-stage .triangle:nth-child(3) { --triStep: 2; }
+.shimmer-stage .triangle:nth-child(4) { --triStep: 3; }
+.shimmer-stage .triangle:nth-child(5) { --triStep: 4; }
+
+@keyframes shimmer {
+  0%   { background-position: top, left; }
+  100% { background-position: bottom, right; }
+}
+
+/* Reduced motion: hold the polyhedron still (no spin/wobble/shimmer). */
+@media (prefers-reduced-motion: reduce) {
+  .shimmer-stage,
+  .shimmer-stage .pivot,
+  .shimmer-stage .starHedron,
+  .shimmer-stage .pentagon::before,
+  .shimmer-stage .triangle { animation: none; }
+}
+
+/* Mobile: pages stack; move the scene to the upper page, keep it smaller. */
+@media (max-width: 680px) {
+  .shimmer-stage { width: 100%; bottom: 50%; font-size: clamp(2px, 1.6vmin, 4px); }
+}
+
+/* Faint spine down the gutter of each spread */
+.spread__spine {
+  position: absolute; z-index: 2; pointer-events: none;
+  top: 16vh; bottom: 16vh; left: 50%;
+  width: 1px; transform: translateX(-0.5px);
+  background: linear-gradient(180deg,
+    transparent, rgba(237,237,237,0.18) 15%,
+    rgba(237,237,237,0.18) 85%, transparent);
+}
+
+/* RIGHT PAGE text */
+.page--right {
+  grid-column: 2; z-index: 3;
+  display: flex; flex-direction: column;
+  align-items: flex-start; justify-content: center;
+  text-align: left; padding: 0 6vw;
+}
+.aspect__eyebrow {
+  /* HEADLINE — the aspect title (big). */
+  margin: 0 0 var(--s-2) 0;
+  color: var(--text); font-weight: 300;
+  font-size: clamp(1.5rem, 3.4vw, 2.4rem);
+  line-height: 1.25; letter-spacing: 0.02em;
+  max-width: 16ch; text-shadow: 0 0 26px rgba(237,237,237,0.14);
+}
+.aspect__line {
+  /* CAPTION — the supporting line (small, muted). */
+  margin: 0; color: var(--muted); font-weight: 400;
+  font-size: clamp(0.72rem, 1.5vw, 0.9rem);
+  line-height: 1.5; letter-spacing: 0.04em;
+  max-width: 34ch;
+}
+
+/* Scroll cue on the first spread */
+.scroll-cue {
+  position: absolute; z-index: 3; left: 50%; bottom: 4vh;
+  transform: translateX(-50%);
+  color: var(--muted); font-size: 0.7rem; letter-spacing: 0.22em;
+  text-transform: uppercase; text-align: center; pointer-events: none;
+}
+.scroll-cue span { display: block; margin-top: 6px; font-size: 1rem;
+  animation: bob 1.8s ease-in-out infinite; }
+@keyframes bob { 0%,100%{transform:translateY(0)} 50%{transform:translateY(5px)} }
+
+/* Mobile: stack the two pages (art on top, text below). */
+@media (max-width: 680px) {
+  .spread { grid-template-columns: 1fr; grid-template-rows: 1fr 1fr; }
+  .spread__spine { display: none; }
+  .page--right {
+    grid-column: 1; grid-row: 2;
+    align-items: center; text-align: center;
+  }
+  .aspect__eyebrow { max-width: 20ch; }
+  .aspect__line { max-width: 34ch; }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .book { scroll-behavior: auto; }
+  .scroll-cue span { animation: none; }
+}

@@ -3,160 +3,108 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Sachin Kumar N N</title>
 
-  <!-- Apply saved theme before paint to avoid a flash. Dark is default. -->
-  <script>
-    (function () {
-      try {
-        if (localStorage.getItem("theme") === "light") {
-          document.documentElement.setAttribute("data-theme", "light");
-        }
-      } catch (e) {}
-    })();
-  </script>
+  <!-- ============ BASIC SEO ============ -->
+  <title>Sachin</title>
+  <meta name="description" content="Sachin — software engineer & researcher." />
 
+  <!-- ============ OPEN GRAPH ============ -->
+  <meta property="og:type" content="website" />
+  <meta property="og:title" content="Sachin" />
+  <meta property="og:description" content="Software engineer & researcher." />
+  <meta property="og:url" content="https://nofinsachin.github.io" />
+  <meta name="twitter:card" content="summary" />
+
+  <!-- ============ INLINE SVG FAVICON (owner's initials) ============ -->
+  <link rel="icon" href="data:image/svg+xml,
+    <svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'>
+      <rect width='100' height='100' rx='16' fill='%23000000'/>
+      <text x='50' y='50' font-family='monospace' font-size='44'
+        fill='%23EDEDED' text-anchor='middle' dominant-baseline='central'>S</text>
+    </svg>" />
+
+  <!-- ============ TERMINAL FONT (only external dependency) ============ -->
   <link rel="preconnect" href="https://fonts.googleapis.com" />
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
-  <link
-    href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&family=JetBrains+Mono:wght@400;500&display=swap"
-    rel="stylesheet"
-  />
-  <link rel="stylesheet" href="style.css" />
+  <link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@300;400;500&display=swap" rel="stylesheet" />
+
+  <!-- Site styles -->
+  <link rel="stylesheet" href="styles.css" />
 </head>
+
 <body>
+  <!-- Shared atmosphere: the flowing letters & numbers (fixed, all spreads). -->
+  <canvas id="bg-canvas" aria-hidden="true"></canvas>
 
-<div class="layout">
+  <!-- Top tabs — transparent, blends into the night background. -->
+  <nav class="tabs" aria-label="Primary">
+    <a class="tab is-active" href="#" data-tab="home" aria-current="true">Home</a>
+    <a class="tab" href="#" data-tab="projects">Projects</a>
+    <a class="tab" href="#" data-tab="research">Research</a>
+  </nav>
 
-  <!-- LEFT SIDEBAR -->
-  <aside class="sidebar">
-    <div class="profile">
-      <img
-        src="assets/images/profile.jpg"
-        alt="Sachin Kumar N N"
-        class="avatar"
-        onerror="this.style.display='none';document.getElementById('avatar-fallback').style.display='flex';"
-      />
-      <div class="avatar-fallback" id="avatar-fallback">SK</div>
-      <h1>Sachin Kumar N N</h1>
-      <p class="tagline">Travelling the roads less travelled</p>
-    </div>
+  <!-- THE BOOK: scroll-snapping spreads -->
+  <main class="book" id="book">
 
-    <hr class="divider" />
+    <!-- ===== SPREAD 1 — Experience (hourglass) ===== -->
+    <section class="spread" id="spread-experience" data-spread="hourglass" aria-label="Experience">
+      <canvas class="spread__canvas" aria-hidden="true"></canvas>
+      <div class="spread__spine" aria-hidden="true"></div>
+      <div class="page--right">
+        <p class="aspect__eyebrow"></p>
+        <h1 class="aspect__line"></h1>
+      </div>
+      <div class="scroll-cue">Scroll<span aria-hidden="true">↓</span></div>
+    </section>
 
-    <div class="sidebar-info">
-      <p>📍 Utrecht, Netherlands</p>
-      <p>📖 Lifelong Learner</p>
-    </div>
-
-    <hr class="divider" />
-
-    <div class="sidebar-links">
-      <a href="https://github.com/nofinsachin" target="_blank" rel="noopener">GitHub</a>
-      <a href="mailto:sachin@example.com">Email</a>
-    </div>
-
-    <hr class="divider" />
-
-    <button class="theme-toggle" id="theme-toggle" aria-label="Toggle colour theme">
-      <span id="theme-icon"></span>
-      <span id="theme-label">Light</span>
-    </button>
-  </aside>
-
-  <!-- MAIN CONTENT -->
-  <div class="main">
-
-    <!-- TOP TAB NAV -->
-    <nav class="tabs">
-      <button class="tab-btn active" data-tab="about">About</button>
-      <button class="tab-btn" data-tab="research">Research</button>
-      <button class="tab-btn" data-tab="projects">Projects</button>
-      <button class="tab-btn" data-tab="tutorials">Tutorials</button>
-    </nav>
-
-    <!-- TAB PANELS -->
-    <div class="tab-content">
-
-      <!-- ABOUT -->
-      <section id="about" class="tab-panel active">
-        <span class="eyebrow reveal">01 / About</span>
-        <h2 class="reveal">About Me</h2>
-        <p class="reveal">Hello there! Welcome to my personal space. I document my experiences, research, hobby projects, tutorials, and things I find worth sharing.</p>
-        <p class="reveal">I enjoy exploring ideas across domains — from systems and software to science and philosophy. This site is my living notebook.</p>
-      </section>
-
-      <!-- RESEARCH -->
-      <section id="research" class="tab-panel">
-        <span class="eyebrow reveal">02 / Research</span>
-        <h2 class="reveal">Research</h2>
-
-        <div class="card reveal">
-          <h3>The "Not Stoic" Project</h3>
-          <p class="meta card-status">Status: Informal Research · Ongoing</p>
-
-          <p>I am currently investigating the modern misapplication of the terms <strong>"Stoicism"</strong> and <strong>"stoic."</strong> In recent years, these concepts have been heavily commodified and misunderstood in popular culture.</p>
-
-          <p>My core hypothesis is that this trend stems from an innate human need to appear polished, resilient, and unbothered on the outside, without actually making the difficult, underlying changes to one's character, virtues, and personality.</p>
-
-          <h4>Key Areas of Exploration</h4>
-          <ul>
-            <li><strong>Aesthetic vs. Philosophy:</strong> How Stoicism became a superficial "life hack" rather than a rigorous framework for living.</li>
-            <li><strong>Emotional Suppression:</strong> The dangerous conflation of merely hiding your feelings with actual emotional regulation.</li>
-            <li><strong>The Polish vs. The Core:</strong> Why it is easier for people to adopt the <em>appearance</em> of a Stoic than to do the internal work required to build a solid character.</li>
-          </ul>
-        </div>
-      </section>
-
-      <!-- PROJECTS -->
-      <section id="projects" class="tab-panel">
-        <span class="eyebrow reveal">03 / Projects</span>
-        <h2 class="reveal">Projects</h2>
-        <p class="reveal">A collection of my hobby builds, experiments, and open-source contributions.</p>
-
-        <div class="grid">
-          <div class="card reveal">
-            <h3>Personal Knowledge Base</h3>
-            <p>A static site built with HTML/CSS to document my research, tutorials, and thoughts (you are looking at it!).</p>
-            <div class="tags">
-              <span class="tag">HTML/CSS</span>
-              <span class="tag">GitHub Pages</span>
-            </div>
-          </div>
-
-          <div class="card reveal">
-            <h3>Project Name Here</h3>
-            <p>A brief description of what the project does, the problem it solves, or what you learned building it.</p>
-            <div class="tags">
-              <span class="tag">Python</span>
-              <span class="tag">Linux</span>
+    <!-- ===== SPREAD 2 — DevOps & Platform Engineering (shimmer polyhedron) ===== -->
+    <section class="spread" id="spread-devops" data-spread="shimmer" aria-label="DevOps and Platform Engineering">
+      <!-- Left-page 3D scene: a slowly spinning, shimmering polyhedron.
+           Adapted from shimmer.css. Purely decorative. -->
+      <div class="shimmer-stage" aria-hidden="true">
+        <div class="scene">
+          <div class="pivot">
+            <div class="starHedron">
+              <div class="pentagon lid"><span class="triangle"></span><span class="triangle"></span><span class="triangle"></span><span class="triangle"></span><span class="triangle"></span></div>
+              <div class="pentagon lid"><span class="triangle"></span><span class="triangle"></span><span class="triangle"></span><span class="triangle"></span><span class="triangle"></span></div>
+              <div class="pentagon side"><span class="triangle"></span><span class="triangle"></span><span class="triangle"></span><span class="triangle"></span><span class="triangle"></span></div>
+              <div class="pentagon side"><span class="triangle"></span><span class="triangle"></span><span class="triangle"></span><span class="triangle"></span><span class="triangle"></span></div>
+              <div class="pentagon side"><span class="triangle"></span><span class="triangle"></span><span class="triangle"></span><span class="triangle"></span><span class="triangle"></span></div>
+              <div class="pentagon side"><span class="triangle"></span><span class="triangle"></span><span class="triangle"></span><span class="triangle"></span><span class="triangle"></span></div>
+              <div class="pentagon side"><span class="triangle"></span><span class="triangle"></span><span class="triangle"></span><span class="triangle"></span><span class="triangle"></span></div>
+              <div class="pentagon side"><span class="triangle"></span><span class="triangle"></span><span class="triangle"></span><span class="triangle"></span><span class="triangle"></span></div>
+              <div class="pentagon side"><span class="triangle"></span><span class="triangle"></span><span class="triangle"></span><span class="triangle"></span><span class="triangle"></span></div>
+              <div class="pentagon side"><span class="triangle"></span><span class="triangle"></span><span class="triangle"></span><span class="triangle"></span><span class="triangle"></span></div>
+              <div class="pentagon side"><span class="triangle"></span><span class="triangle"></span><span class="triangle"></span><span class="triangle"></span><span class="triangle"></span></div>
+              <div class="pentagon side"><span class="triangle"></span><span class="triangle"></span><span class="triangle"></span><span class="triangle"></span><span class="triangle"></span></div>
             </div>
           </div>
         </div>
-      </section>
+      </div>
+      <div class="spread__spine" aria-hidden="true"></div>
+      <div class="page--right">
+        <p class="aspect__eyebrow"></p>
+        <h1 class="aspect__line"></h1>
+      </div>
+    </section>
 
-      <!-- TUTORIALS -->
-      <section id="tutorials" class="tab-panel">
-        <span class="eyebrow reveal">04 / Tutorials</span>
-        <h2 class="reveal">Tutorials</h2>
-        <p class="reveal">Technical guides and step-by-step tutorials I've written.</p>
+    <!-- ===== SPREAD 3 — Artificial Intelligence (dots world map) ===== -->
+    <section class="spread" id="spread-ai" data-spread="worldmap" aria-label="Artificial Intelligence">
+      <canvas class="spread__canvas spread__canvas--interactive"></canvas>
+      <div class="spread__spine" aria-hidden="true"></div>
+      <div class="page--right">
+        <p class="aspect__eyebrow"></p>
+        <h1 class="aspect__line"></h1>
+      </div>
+    </section>
 
-        <div class="card reveal">
-          <h3>Setting up a Production-Ready PostgreSQL Cluster in Kubernetes</h3>
-          <p class="meta">Kubernetes · PostgreSQL · DevOps</p>
-          <p>A comprehensive guide on deploying a highly available, production-grade Postgres database inside a Kubernetes cluster. This tutorial covers StatefulSets, Persistent Volumes, automated backups, and handling failovers gracefully.</p>
-          <a href="#" class="btn-link">Read Tutorial →</a>
-        </div>
-      </section>
+  </main>
 
-    </div>
-  </div>
-</div>
+  <!-- Atmospheric overlays (from sample.txt): vignette + film grain. -->
+  <div class="vignette" aria-hidden="true"></div>
+  <div class="grain" aria-hidden="true"></div>
 
-<footer>
-  <p>© 2026 Sachin Kumar N N · Built with GitHub Pages</p>
-</footer>
-
-<script src="script.js"></script>
+  <!-- Site script -->
+  <script src="script.js"></script>
 </body>
 </html>
