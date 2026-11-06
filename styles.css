@@ -72,6 +72,139 @@ body {
 }
 
 /* ============================================================
+   VIEWS — one per top tab (Home / Projects / Research).
+   Only the active view is shown. The Home view holds the book;
+   Projects / Research are scrollable document-style pages.
+   ============================================================ */
+.view { display: none; }
+.view.is-active { display: block; }
+
+/* Projects reuses the Home "book" (scroll-snap spreads) — its inner
+   .book handles scrolling, so the view itself is a plain full-height
+   layer. Research stays a simple scrollable document page. */
+#view-projects {
+  position: relative; z-index: 2;   /* above bg-canvas, below vignette */
+  height: 100vh;
+}
+#view-research {
+  position: relative; z-index: 2;
+  height: 100vh; overflow-y: auto;
+}
+.view__inner {
+  max-width: 1080px; margin: 0 auto;
+  padding: 24vh 2.2rem 12vh;        /* clear the fixed tabs up top */
+}
+.view__head { margin-bottom: 4rem; }
+.view__eyebrow {
+  margin: 0 0 var(--s-2) 0;
+  color: var(--muted); font-size: 0.82rem;
+  letter-spacing: 0.16em; text-transform: uppercase;
+}
+.view__title {
+  margin: 0; color: var(--text); font-weight: 300;
+  font-size: clamp(1.6rem, 4vw, 2.6rem); line-height: 1.2;
+  letter-spacing: 0.02em;
+  text-shadow: 0 0 26px rgba(237,237,237,0.14);
+}
+.view__empty {
+  margin: 0; color: var(--muted); font-size: 0.9rem;
+  letter-spacing: 0.04em;
+}
+
+/* ============================================================
+   PROJECTS — rendered as Home-style spreads (left-page art +
+   right-page text). Each project is one full-viewport spread.
+   A condensed summary per project; detail lives in its own repo.
+   ============================================================ */
+/* The right-page project metadata, layered under the caption line. */
+.project__num {
+  color: var(--muted); font-weight: 300;
+  margin-right: 0.6em; font-size: 0.7em;
+  letter-spacing: 0.12em;
+}
+.project__status {
+  margin: 0 0 1.2rem 0; color: var(--muted);
+  font-size: 0.68rem; letter-spacing: 0.14em; text-transform: uppercase;
+}
+.project__summary {
+  margin: 1.4rem 0 0 0; color: var(--muted);
+  font-size: 0.8rem; line-height: 1.6; letter-spacing: 0.02em;
+  max-width: 42ch;
+}
+.project-card__tags {
+  display: flex; flex-wrap: wrap; gap: 0.5rem;
+  margin: 1.4rem 0 0 0; padding: 0; list-style: none;
+  max-width: 42ch;
+}
+.project-card__tags li {
+  color: var(--muted); font-size: 0.64rem;
+  letter-spacing: 0.1em; text-transform: uppercase;
+  padding: 0.25rem 0.55rem;
+  border: 1px solid rgba(237,237,237,0.12);
+  border-radius: 999px;
+}
+.project-card__links {
+  display: flex; gap: 1.4rem; margin: 1.8rem 0 0 0;
+}
+.project-card__link {
+  color: var(--muted); font-size: 0.74rem;
+  letter-spacing: 0.1em; text-transform: uppercase;
+  text-decoration: none;
+  border-bottom: 1px solid transparent;
+  transition: color 0.2s ease, border-color 0.2s ease;
+}
+.project-card__link:hover {
+  color: var(--text); border-bottom-color: var(--text);
+}
+.project-card__link[aria-disabled="true"] {
+  opacity: 0.5; pointer-events: none;
+}
+
+/* ============================================================
+   PIXEL-ART OXPECKER ON AN ELEPHANT (Projects left page).
+   Rendered by script.js: a single .pixel-art element whose
+   box-shadow paints one square per pixel from a character grid.
+   The grid is ~43 x 22 pixels. --px sets the pixel size, so the
+   whole scene scales from one knob. Monochrome, no image file.
+   Scoped under .bird-stage so it stays on the LEFT PAGE.
+   ============================================================ */
+.bird-stage {
+  position: absolute; z-index: 1;
+  top: 0; bottom: 0; left: 0; width: 50%;   /* LEFT PAGE */
+  display: grid; place-items: center;
+  overflow: hidden; pointer-events: none;
+  /* one knob scales the pixel size with the viewport */
+  --px: clamp(4px, 1.1vmin, 9px);
+}
+.pixel-art {
+  /* The element is a single pixel at the grid origin; box-shadow (set
+     inline) draws the remaining ~400 pixels down-and-right from here.
+     We translate up/left by half the grid so the scene stays centred. */
+  width: var(--px); height: var(--px);
+  /* grid is ~43 wide, 22 tall -> shift to centre it in the stage */
+  transform: translate(calc(var(--px) * -21), calc(var(--px) * -11));
+  filter: drop-shadow(0 0 calc(var(--px) * 1.4) rgba(237,237,237,0.16));
+  animation: pixelBreathe 6s ease-in-out infinite;
+}
+@keyframes pixelBreathe {
+  0%,100% { filter: drop-shadow(0 0 calc(var(--px) * 1.2) rgba(237,237,237,0.12)); }
+  50%     { filter: drop-shadow(0 0 calc(var(--px) * 2.0) rgba(237,237,237,0.22)); }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .pixel-art { animation: none; }
+}
+
+/* Mobile: the spread stacks (art on top). Shrink/recentre the scene. */
+@media (max-width: 680px) {
+  .view__inner { padding: 20vh 1.4rem 10vh; }
+  .bird-stage {
+    width: 100%; bottom: 50%;
+    --px: clamp(3px, 1.7vmin, 7px);
+  }
+}
+
+/* ============================================================
    THE BOOK — a vertical, scroll-snapping stack of spreads.
    Each .spread is one full-viewport "two-page" opening.
    ============================================================ */

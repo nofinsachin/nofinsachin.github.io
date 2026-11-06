@@ -43,8 +43,15 @@
     <a class="tab" href="#" data-tab="research">Research</a>
   </nav>
 
-  <!-- THE BOOK: scroll-snapping spreads -->
-  <main class="book" id="book">
+  <!-- ============================================================
+       VIEWS — one per top tab. Only the active view is shown;
+       routing lives in script.js (section 2b). The Home view holds
+       the original scroll-snapping book.
+       ============================================================ -->
+
+  <!-- ===== HOME VIEW — the scroll-snapping book of spreads ===== -->
+  <main class="view is-active" id="view-home" data-view="home">
+  <div class="book" id="book">
 
     <!-- ===== SPREAD 1 — Experience (hourglass) ===== -->
     <section class="spread" id="spread-experience" data-spread="hourglass" aria-label="Experience">
@@ -98,9 +105,27 @@
       </div>
     </section>
 
+  </div>
   </main>
 
-  <!-- Atmospheric overlays (from sample.txt): vignette + film grain. -->
+  <!-- ===== PROJECTS VIEW — a quiet grid of project cards. Each card
+       is a condensed summary; full detail lives in its own repo.
+       Cards are rendered from the PROJECTS constant in script.js. ===== -->
+  <main class="view" id="view-projects" data-view="projects" aria-label="Projects" hidden>
+    <div class="book projects-grid" id="projects-grid"></div>
+  </main>
+
+  <!-- ===== RESEARCH VIEW — placeholder until content is added. ===== -->
+  <main class="view" id="view-research" data-view="research" aria-label="Research" hidden>
+    <div class="view__inner">
+      <header class="view__head">
+        <p class="view__eyebrow">Research</p>
+        <h1 class="view__title">Notes & inquiry.</h1>
+      </header>
+      <p class="view__empty">Coming soon.</p>
+    </div>
+  </main>
+
   <div class="vignette" aria-hidden="true"></div>
   <div class="grain" aria-hidden="true"></div>
 

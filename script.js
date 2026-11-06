@@ -39,6 +39,32 @@ const SPREADS = {
                          line: "Bringing intelligence to systems, everywhere." }
 };
 
+// Projects tab content. Each entry is a CONDENSED summary — the full
+// detail for each project lives in its own repository. Rendered as
+// cards into #projects-grid by the tabs() module below.
+//   status  — short lifecycle label (e.g. "In design", "Active")
+//   tags    — a few keyword pills
+//   links   — array of { label, href }. Omit href (or leave falsy)
+//             to render a disabled placeholder link.
+const PROJECTS = [
+  {
+    name: "oxpecker",
+    status: "In design",
+    tagline: "A keyboard-driven PostgreSQL TUI, built for the terminal and the cluster.",
+    summary:
+      "A static-binary Postgres client that runs anywhere — including air-gapped " +
+      "Kubernetes. Read-only by default with explicit, audited write safety. Lazy " +
+      "catalog introspection, a fuzzy object finder, keyset-paged data views, and a " +
+      "streaming SQL results grid. Later phases add seeded synthetic data generation " +
+      "and resettable database environments for training AI agents, exposed over MCP.",
+    tags: ["Go / Rust", "PostgreSQL", "TUI", "Kubernetes", "Air-gapped", "AI agents"],
+    links: [
+      { label: "Repo", href: "https://github.com/nofinsachin/oxpecker" },
+      { label: "Project", href: "https://github.com/users/nofinsachin/projects/1" }
+    ]
+  }
+];
+
 // ---- Spread 1: Hourglass (left page) — polished ----
 const HOURGLASS = {
   heightFrac:  0.34, widthRatio: 0.62, neckRatio: 0.05,
@@ -144,33 +170,142 @@ const LAND_MASK = [
 })();
 
 /* ================================================================
-   2b) TOP TABS — active-state only (no content/routing yet)
-       Clicking a tab marks it active. `navigateTo` is a hook left
-       intentionally empty: wire it to real sections/routing later.
+   2b) TOP TABS — real view routing (Home / Projects / Research).
+       Clicking a tab shows the matching <main class="view"> and
+       hides the others, updates the active-tab styling, and reflects
+       the choice in the URL hash (so links/refreshes are stable).
+       Also renders the PROJECTS cards into the Projects view once.
    ================================================================ */
 (function tabs() {
-  const tabEls = Array.from(document.querySelectorAll(".tab"));
-  if (!tabEls.length) return;
+  const tabEls  = Array.from(document.querySelectorAll(".tab"));
+  const viewEls = Array.from(document.querySelectorAll(".view"));
+  if (!tabEls.length || !viewEls.length) return;
 
-  function navigateTo(/* name */) {
-    // Placeholder: no content exists yet. Hook up section scroll /
-    // routing here when Home / Projects / Research pages are added.
+  const names = tabEls.map(t => t.dataset.tab);
+
+  // --- render the Projects cards (once) ---
+  function renderProjects() {
+    const grid = document.getElementById("projects-grid");
+    if (!grid || grid.childElementCount || !Array.isArray(PROJECTS)) return;
+    const list = PROJECTS;
+    const esc = (s) => String(s).replace(/[&<>"']/g, c => (
+      { "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;", "'": "&#39;" }[c]
+    ));
+
+    // The pure-CSS oxpecker bird — perched, built from layered shapes.
+    // Pixel-art oxpecker-on-an-elephant (the bird's real-world host).
+    // The scene is a character grid: 'E' = elephant (grey), 'B' = bird
+    // (bright), 'T' = tusk (bright), ' ' = empty. It's rendered as a
+    // single element whose box-shadow paints one square per pixel, so it
+    // stays crisp at any scale and needs no image file. Scoped under
+    // .bird-stage so it sits on the LEFT PAGE of the spread.
+    const PIXEL_ART = [
+      "                    B                      ",
+      "                   BBB                     ",
+      "                  BBBBB                    ",
+      "                   BBB                     ",
+      "            EEEEEEEEEEEEEEEEEEEEE          ",
+      "         EEEEEEEEEEEEEEEEEEEEEEEE          ",
+      "       EEEEEEEEEEEEEEEEEEEEEEEEEEEE        ",
+      "      EEEEEEEEEEEEEEEEEEEEEEEEEEEEEEE      ",
+      "     EEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEE     ",
+      "    EEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEE    ",
+      "   EEEEEEE EEEEEEEEEEEEEEEEEEEEEEEEEEEEE   ",
+      "  EEEEEEEE EEEEEEEEEEEEEEEEEEEEEEEEEEEEE   ",
+      "  EEEEEEE  EEEEEEEEEEEEEEEEEEEEEEEEEEEEE   ",
+      "  EEE      EEEEEEEEEEEEEEEEEEEEEEEEEEEEEE  ",
+      "  EE       EEEEEEEEEEEEEEEEEEEEEEEEEEEE E  ",
+      "  EE   TT  EEEEEEEEEEEEEEEEEEEEEEEEEEE  E  ",
+      "  EE  TT   EEEEEE    EEEE     EEEEEEE   E  ",
+      "   E  T    EEEEEE    EEEE     EEEEEE   EEE ",
+      "           EEEEEE    EEEE     EEEEEE    E  ",
+      "           EEEEEE    EEEE     EEEEEE       ",
+      "           EEEEEE    EEEE     EEEEEE       ",
+      "           EEEEEE    EEEE     EEEEEE       "
+    ];
+
+    function pixelArt() {
+      const cell = { E: "rgba(237,237,237,0.78)", B: "#ffffff", T: "rgba(237,237,237,0.95)" };
+      const shadows = [];
+      for (let y = 0; y < PIXEL_ART.length; y++) {
+        const row = PIXEL_ART[y];
+        for (let x = 0; x < row.length; x++) {
+          const c = row[x];
+          const color = cell[c];
+          if (color) shadows.push(`calc(${x} * var(--px)) calc(${y} * var(--px)) 0 0 ${color}`);
+        }
+      }
+      // The element itself is one pixel at the origin; box-shadow paints
+      // the rest. Width/height just define the pixel size via --px.
+      return `
+        <div class="bird-stage" aria-hidden="true">
+          <div class="pixel-art" style="box-shadow: ${shadows.join(", ")}"></div>
+        </div>`;
+    }
+
+    // Each project is a full-viewport spread, mirroring the Home book:
+    // left page = art, right page = eyebrow + caption. Extra project
+    // detail (summary, tags, links) sits under the caption on the right.
+    grid.innerHTML = list.map((p, i) => {
+      const tags = (p.tags || []).map(t => `<li>${esc(t)}</li>`).join("");
+      const links = (p.links || []).map(l => {
+        const label = esc(l.label || "Link");
+        return l.href
+          ? `<a class="project-card__link" href="${esc(l.href)}" target="_blank" rel="noopener">${label}</a>`
+          : `<a class="project-card__link" href="#" aria-disabled="true" title="Coming soon">${label}</a>`;
+      }).join("");
+      const num = String(i + 1).padStart(2, "0");
+      return `
+        <section class="spread" aria-label="${esc(p.name)}">
+          ${pixelArt()}
+          <div class="spread__spine" aria-hidden="true"></div>
+          <div class="page--right">
+            <p class="aspect__eyebrow">
+              <span class="project__num">${num}</span>${esc(p.name)}
+            </p>
+            ${p.status ? `<p class="project__status">${esc(p.status)}</p>` : ""}
+            ${p.tagline ? `<p class="aspect__line">${esc(p.tagline)}</p>` : ""}
+            ${p.summary ? `<p class="project__summary">${esc(p.summary)}</p>` : ""}
+            ${tags ? `<ul class="project-card__tags">${tags}</ul>` : ""}
+            ${links ? `<div class="project-card__links">${links}</div>` : ""}
+          </div>
+        </section>`;
+    }).join("");
   }
 
-  function setActive(el) {
+  function setActive(name) {
+    if (!names.includes(name)) name = "home";
+
     tabEls.forEach(t => {
-      const on = t === el;
+      const on = t.dataset.tab === name;
       t.classList.toggle("is-active", on);
       if (on) t.setAttribute("aria-current", "true");
       else    t.removeAttribute("aria-current");
     });
+
+    viewEls.forEach(v => {
+      const on = v.dataset.view === name;
+      v.classList.toggle("is-active", on);
+      if (on) v.removeAttribute("hidden");
+      else    v.setAttribute("hidden", "");
+    });
+
+    if (name === "projects") renderProjects();
   }
 
   tabEls.forEach(el => el.addEventListener("click", (e) => {
     e.preventDefault();
-    setActive(el);
-    navigateTo(el.dataset.tab);
+    const name = el.dataset.tab;
+    setActive(name);
+    if (history.replaceState) history.replaceState(null, "", name === "home" ? "#" : "#" + name);
+    else location.hash = name === "home" ? "" : name;
   }));
+
+  // Respond to back/forward and direct #hash loads.
+  window.addEventListener("hashchange", () => setActive(location.hash.replace(/^#/, "")));
+
+  // Initial view from the URL hash (defaults to home).
+  setActive(location.hash.replace(/^#/, ""));
 })();
 
 /* ================================================================
