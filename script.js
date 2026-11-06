@@ -65,6 +65,32 @@ const PROJECTS = [
   }
 ];
 
+// Research tab content. Each entry is a topic I'm investigating —
+// a short abstract plus the angle I'm taking. Rendered as a numbered
+// list into #research-list by the tabs() module below.
+//   status  — short lifecycle label (e.g. "Exploring", "Writing")
+//   tags    — a few keyword pills
+//   links   — optional array of { label, href }
+const RESEARCH = [
+  {
+    title: "therapist",
+    status: "Exploring",
+    art: ["401", "403", "404", "500", "502"],   // left-page 3D error codes
+    abstract:
+      "Order management systems in telecom coordinate long, multi-step fulfilment " +
+      "flows across many downstream systems. When a step stalls or fails, the order " +
+      "falls into an error or jeopardy state that today is largely handled with static " +
+      "rules, manual triage, and tribal knowledge — slow to resolve and hard to scale.",
+    angle:
+      "Survey the current state of error and jeopardy handling in modern OM stacks, " +
+      "then design a modern, AI-powered approach: automatic classification of failures, " +
+      "root-cause and impact prediction, and guided or autonomous remediation — reducing " +
+      "fallout, missed SLAs, and manual intervention.",
+    tags: ["Telecom", "Order Management", "Jeopardy", "AI / ML", "Automation"],
+    links: []
+  }
+];
+
 // ---- Spread 1: Hourglass (left page) — polished ----
 const HOURGLASS = {
   heightFrac:  0.34, widthRatio: 0.62, neckRatio: 0.05,
@@ -273,6 +299,57 @@ const LAND_MASK = [
     }).join("");
   }
 
+  // --- render the Research topics (once) ---
+  function renderResearch() {
+    const listEl = document.getElementById("research-list");
+    if (!listEl || listEl.childElementCount || !Array.isArray(RESEARCH)) return;
+    const esc = (s) => String(s).replace(/[&<>"']/g, c => (
+      { "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;", "'": "&#39;" }[c]
+    ));
+
+    // Pure-CSS 3D extruded error codes for the left page. Accepts a
+    // single glyph or a list (e.g. ["401","403","404","500","502"]).
+    // Each code is its own 3D glyph; CSS scatters them at different
+    // positions, depths, and drift phases so the page reads full.
+    // Depth comes from layered text-shadow. Scoped -> LEFT PAGE.
+    function error3dArt(glyphs) {
+      const list = Array.isArray(glyphs) ? glyphs : [glyphs];
+      const items = list.map((g, k) =>
+        `<span class="error3d__code" style="--k:${k}">${esc(g)}</span>`
+      ).join("");
+      return `
+        <div class="error3d-stage" aria-hidden="true">
+          <div class="error3d">${items}</div>
+        </div>`;
+    }
+
+    listEl.innerHTML = RESEARCH.map((r, i) => {
+      const tags = (r.tags || []).map(t => `<li>${esc(t)}</li>`).join("");
+      const links = (r.links || []).map(l => {
+        const label = esc(l.label || "Link");
+        return l.href
+          ? `<a class="project-card__link" href="${esc(l.href)}" target="_blank" rel="noopener">${label}</a>`
+          : `<a class="project-card__link" href="#" aria-disabled="true" title="Coming soon">${label}</a>`;
+      }).join("");
+      const num = String(i + 1).padStart(2, "0");
+      return `
+        <section class="spread" aria-label="${esc(r.title)}">
+          ${error3dArt(r.art || ["404"])}
+          <div class="spread__spine" aria-hidden="true"></div>
+          <div class="page--right">
+            <p class="aspect__eyebrow">
+              <span class="project__num">${num}</span>${esc(r.title)}
+            </p>
+            ${r.status ? `<p class="project__status">${esc(r.status)}</p>` : ""}
+            ${r.abstract ? `<p class="research-item__abstract">${esc(r.abstract)}</p>` : ""}
+            ${r.angle ? `<p class="research-item__angle">${esc(r.angle)}</p>` : ""}
+            ${tags ? `<ul class="project-card__tags">${tags}</ul>` : ""}
+            ${links ? `<div class="project-card__links">${links}</div>` : ""}
+          </div>
+        </section>`;
+    }).join("");
+  }
+
   function setActive(name) {
     if (!names.includes(name)) name = "home";
 
@@ -291,6 +368,7 @@ const LAND_MASK = [
     });
 
     if (name === "projects") renderProjects();
+    if (name === "research") renderResearch();
   }
 
   tabEls.forEach(el => el.addEventListener("click", (e) => {

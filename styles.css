@@ -79,16 +79,13 @@ body {
 .view { display: none; }
 .view.is-active { display: block; }
 
-/* Projects reuses the Home "book" (scroll-snap spreads) — its inner
-   .book handles scrolling, so the view itself is a plain full-height
-   layer. Research stays a simple scrollable document page. */
-#view-projects {
+/* Projects and Research both reuse the Home "book" (scroll-snap
+   spreads) — the inner .book handles scrolling, so the view itself
+   is a plain full-height layer. */
+#view-projects,
+#view-research {
   position: relative; z-index: 2;   /* above bg-canvas, below vignette */
   height: 100vh;
-}
-#view-research {
-  position: relative; z-index: 2;
-  height: 100vh; overflow-y: auto;
 }
 .view__inner {
   max-width: 1080px; margin: 0 auto;
@@ -158,6 +155,99 @@ body {
 }
 .project-card__link[aria-disabled="true"] {
   opacity: 0.5; pointer-events: none;
+}
+
+/* ============================================================
+   RESEARCH — rendered as Home-style spreads (left-page 3D glyph +
+   right-page text). The right page reuses the shared .aspect__eyebrow
+   / .project__num / .project__status; these are the extra blocks.
+   ============================================================ */
+.research-item__abstract {
+  margin: 1.4rem 0 0 0; color: var(--text);
+  font-size: 0.84rem; line-height: 1.6; letter-spacing: 0.02em;
+  opacity: 0.86; max-width: 42ch;
+}
+.research-item__angle {
+  margin: 1rem 0 0 0; color: var(--muted);
+  font-size: 0.8rem; line-height: 1.6; letter-spacing: 0.02em;
+  padding-left: 0.9rem; border-left: 1px solid rgba(237,237,237,0.18);
+  max-width: 42ch;
+}
+
+/* ============================================================
+   CSS 3D ERROR CODES (Research left page) — a scatter of extruded
+   HTTP error codes (401/403/404/500/502) floating at different
+   depths and positions, each drifting gently. Depth is built from
+   stacked text-shadow layers. Monochrome, no image file. Scoped
+   under .error3d-stage so it stays on the LEFT PAGE.
+   ============================================================ */
+.error3d-stage {
+  position: absolute; z-index: 1;
+  top: 0; bottom: 0; left: 0; width: 50%;   /* LEFT PAGE */
+  display: grid; place-items: center;
+  overflow: hidden; pointer-events: none;
+  perspective: 900px;
+  font-size: clamp(2.4rem, 9vmin, 7rem);     /* base glyph scale */
+}
+/* The field fills most of the left page; codes are placed within it. */
+.error3d {
+  position: relative;
+  width: 78%; height: 68%;
+  transform-style: preserve-3d;
+  animation: error3dTilt 16s ease-in-out infinite;
+}
+@keyframes error3dTilt {
+  0%   { transform: rotateX(12deg) rotateY(-20deg); }
+  50%  { transform: rotateX(-8deg) rotateY(20deg); }
+  100% { transform: rotateX(12deg) rotateY(-20deg); }
+}
+.error3d__code {
+  position: absolute;
+  font-weight: 500; letter-spacing: 0.04em;
+  color: #f2f2f2; white-space: nowrap;
+  /* Extruded depth: a ladder of darker shadows receding down-right,
+     then a soft outer glow so each code reads on the night backdrop. */
+  text-shadow:
+    1px 1px 0 #cfcfcf,  2px 2px 0 #bdbdbd,  3px 3px 0 #a8a8a8,
+    4px 4px 0 #949494,  5px 5px 0 #818181,  6px 6px 0 #6e6e6e,
+    7px 7px 0 #5b5b5b,  8px 8px 0 #484848,  9px 9px 0 #353535,
+    10px 10px 0 #222222, 12px 12px 18px rgba(0,0,0,0.65),
+    0 0 40px rgba(237,237,237,0.16);
+  /* each code drifts on its own phase (staggered by its index --k) */
+  animation: error3dFloat 7s ease-in-out infinite;
+  animation-delay: calc(var(--k) * -1.3s);
+}
+@keyframes error3dFloat {
+  0%,100% { transform: translateZ(var(--z, 0px)) translateY(0); }
+  50%     { transform: translateZ(var(--z, 0px)) translateY(-0.18em); }
+}
+
+/* Scatter: distinct position, size, and depth per code. The nearest
+   (biggest, brightest) sits centre; others recede around it. */
+.error3d__code:nth-child(1) { /* 401 */
+  top: 4%;  left: 2%;   font-size: 0.62em; --z: -120px; opacity: 0.72;
+}
+.error3d__code:nth-child(2) { /* 403 */
+  top: 48%; left: 0%;   font-size: 0.78em; --z: -60px;  opacity: 0.85;
+}
+.error3d__code:nth-child(3) { /* 404 — the hero */
+  top: 22%; left: 30%;  font-size: 1.15em; --z: 40px;   opacity: 1;
+}
+.error3d__code:nth-child(4) { /* 500 */
+  top: 60%; left: 52%;  font-size: 0.72em; --z: -90px;  opacity: 0.8;
+}
+.error3d__code:nth-child(5) { /* 502 */
+  top: 2%;  left: 56%;  font-size: 0.6em;  --z: -150px; opacity: 0.68;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .error3d { animation: none; transform: rotateX(8deg) rotateY(-16deg); }
+  .error3d__code { animation: none; }
+}
+
+/* Mobile: the spread stacks (art on top). Shrink/recentre the field. */
+@media (max-width: 680px) {
+  .error3d-stage { width: 100%; bottom: 50%; font-size: clamp(2rem, 15vmin, 4.6rem); }
 }
 
 /* ============================================================
