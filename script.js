@@ -46,10 +46,43 @@ const SPREADS = {
 //   tags    — a few keyword pills
 //   links   — array of { label, href }. Omit href (or leave falsy)
 //             to render a disabled placeholder link.
+//   art     — a character-grid for the LEFT-PAGE pixel-art (see
+//             pixelArt()). Each row is a string; recognised cells are
+//             the three brightness tones used by the renderer:
+//               muted  (body):      E or S
+//               bright (highlight): B or Q
+//               accent (brightest): T or N
+//             ' ' = empty. Grids are ~43 wide x 22 tall so they stay
+//             centred by the .pixel-art CSS transform.
 const PROJECTS = [
   {
     name: "oxpecker",
     status: "In design",
+    // Pixel-art oxpecker-on-an-elephant (the bird's real-world host).
+    art: [
+      "                    B                      ",
+      "                   BBB                     ",
+      "                  BBBBB                    ",
+      "                   BBB                     ",
+      "            EEEEEEEEEEEEEEEEEEEEE          ",
+      "         EEEEEEEEEEEEEEEEEEEEEEEE          ",
+      "       EEEEEEEEEEEEEEEEEEEEEEEEEEEE        ",
+      "      EEEEEEEEEEEEEEEEEEEEEEEEEEEEEEE      ",
+      "     EEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEE     ",
+      "    EEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEE    ",
+      "   EEEEEEE EEEEEEEEEEEEEEEEEEEEEEEEEEEEE   ",
+      "  EEEEEEEE EEEEEEEEEEEEEEEEEEEEEEEEEEEEE   ",
+      "  EEEEEEE  EEEEEEEEEEEEEEEEEEEEEEEEEEEEE   ",
+      "  EEE      EEEEEEEEEEEEEEEEEEEEEEEEEEEEEE  ",
+      "  EE       EEEEEEEEEEEEEEEEEEEEEEEEEEEE E  ",
+      "  EE   TT  EEEEEEEEEEEEEEEEEEEEEEEEEEE  E  ",
+      "  EE  TT   EEEEEE    EEEE     EEEEEEE   E  ",
+      "   E  T    EEEEEE    EEEE     EEEEEE   EEE ",
+      "           EEEEEE    EEEE     EEEEEE    E  ",
+      "           EEEEEE    EEEE     EEEEEE       ",
+      "           EEEEEE    EEEE     EEEEEE       ",
+      "           EEEEEE    EEEE     EEEEEE       "
+    ],
     tagline: "A keyboard-driven PostgreSQL TUI, built for the terminal and the cluster.",
     summary:
       "A static-binary Postgres client that runs anywhere — including air-gapped " +
@@ -61,6 +94,24 @@ const PROJECTS = [
     links: [
       { label: "Repo", href: "https://github.com/nofinsachin/oxpecker" },
       { label: "Project", href: "https://github.com/users/nofinsachin/projects/1" }
+    ]
+  },
+  {
+    name: "scribe",
+    status: "In design",
+    tagline: "A local-first TUI that answers who changed this field, and when.",
+    summary:
+      "A tiny, offline terminal explorer for Kubernetes object authorship. It decodes " +
+      "an object's managedFields into a browsable field → actor → timestamp graph, so " +
+      "you can see exactly which controller last wrote each field and pivot across the " +
+      "owner chain. No backend, no SaaS, no audit-log pipeline — just a single static " +
+      "binary. Runs interactively as a TUI, or non-interactively for piping into scripts.",
+    tags: ["Rust", "ratatui", "kube-rs", "Kubernetes", "TUI", "managedFields"],
+    // Left-page art: a pure-CSS 3D pencil writing on paper (see
+    // pencilArt() + the .pencil-stage rules in styles.css).
+    artKind: "pencil",
+    links: [
+      { label: "Repo", href: "https://github.com/nofinsachin/scribe" }
     ]
   }
 ];
@@ -218,46 +269,28 @@ const LAND_MASK = [
       { "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;", "'": "&#39;" }[c]
     ));
 
-    // The pure-CSS oxpecker bird — perched, built from layered shapes.
-    // Pixel-art oxpecker-on-an-elephant (the bird's real-world host).
-    // The scene is a character grid: 'E' = elephant (grey), 'B' = bird
-    // (bright), 'T' = tusk (bright), ' ' = empty. It's rendered as a
-    // single element whose box-shadow paints one square per pixel, so it
-    // stays crisp at any scale and needs no image file. Scoped under
-    // .bird-stage so it sits on the LEFT PAGE of the spread.
-    const PIXEL_ART = [
-      "                    B                      ",
-      "                   BBB                     ",
-      "                  BBBBB                    ",
-      "                   BBB                     ",
-      "            EEEEEEEEEEEEEEEEEEEEE          ",
-      "         EEEEEEEEEEEEEEEEEEEEEEEE          ",
-      "       EEEEEEEEEEEEEEEEEEEEEEEEEEEE        ",
-      "      EEEEEEEEEEEEEEEEEEEEEEEEEEEEEEE      ",
-      "     EEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEE     ",
-      "    EEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEE    ",
-      "   EEEEEEE EEEEEEEEEEEEEEEEEEEEEEEEEEEEE   ",
-      "  EEEEEEEE EEEEEEEEEEEEEEEEEEEEEEEEEEEEE   ",
-      "  EEEEEEE  EEEEEEEEEEEEEEEEEEEEEEEEEEEEE   ",
-      "  EEE      EEEEEEEEEEEEEEEEEEEEEEEEEEEEEE  ",
-      "  EE       EEEEEEEEEEEEEEEEEEEEEEEEEEEE E  ",
-      "  EE   TT  EEEEEEEEEEEEEEEEEEEEEEEEEEE  E  ",
-      "  EE  TT   EEEEEE    EEEE     EEEEEEE   E  ",
-      "   E  T    EEEEEE    EEEE     EEEEEE   EEE ",
-      "           EEEEEE    EEEE     EEEEEE    E  ",
-      "           EEEEEE    EEEE     EEEEEE       ",
-      "           EEEEEE    EEEE     EEEEEE       ",
-      "           EEEEEE    EEEE     EEEEEE       "
-    ];
-
-    function pixelArt() {
-      const cell = { E: "rgba(237,237,237,0.78)", B: "#ffffff", T: "rgba(237,237,237,0.95)" };
+    // Left-page pixel-art for a project. The scene is a character grid
+    // (supplied per-project as `art`); it's rendered as a single element
+    // whose box-shadow paints one square per pixel, so it stays crisp at
+    // any scale and needs no image file. Scoped under .bird-stage so it
+    // sits on the LEFT PAGE of the spread.
+    //
+    // Three brightness tones are recognised, each with two aliases so a
+    // grid can read naturally for its subject:
+    //   muted  (body):      E / S   e.g. elephant, parchment scroll
+    //   bright (highlight): B / Q   e.g. bird, quill feather
+    //   accent (brightest): T / N   e.g. tusk, ink / nib
+    function pixelArt(grid) {
+      if (!Array.isArray(grid) || !grid.length) return "";
+      const MUTED  = "rgba(237,237,237,0.78)";
+      const BRIGHT = "#ffffff";
+      const ACCENT = "rgba(237,237,237,0.95)";
+      const cell = { E: MUTED, S: MUTED, B: BRIGHT, Q: BRIGHT, T: ACCENT, N: ACCENT };
       const shadows = [];
-      for (let y = 0; y < PIXEL_ART.length; y++) {
-        const row = PIXEL_ART[y];
+      for (let y = 0; y < grid.length; y++) {
+        const row = grid[y];
         for (let x = 0; x < row.length; x++) {
-          const c = row[x];
-          const color = cell[c];
+          const color = cell[row[x]];
           if (color) shadows.push(`calc(${x} * var(--px)) calc(${y} * var(--px)) 0 0 ${color}`);
         }
       }
@@ -267,6 +300,38 @@ const LAND_MASK = [
         <div class="bird-stage" aria-hidden="true">
           <div class="pixel-art" style="box-shadow: ${shadows.join(", ")}"></div>
         </div>`;
+    }
+
+    // Pure-CSS 3D pencil writing on paper (left page). No JS animation —
+    // all motion lives in the .pencil-stage rules in styles.css. The
+    // markup is just the scene graph: a tilted paper sheet with graphite
+    // lines that draw themselves, and a pencil (barrel / wood / lead /
+    // ferrule / eraser) that drifts across it in sync. Monochrome.
+    function pencilArt() {
+      return `
+        <div class="pencil-stage" aria-hidden="true">
+          <div class="pencil-scene">
+            <div class="paper">
+              <span class="paper__line"></span>
+              <span class="paper__line"></span>
+              <span class="paper__line"></span>
+            </div>
+            <div class="pencil">
+              <span class="pencil__eraser"></span>
+              <span class="pencil__ferrule"></span>
+              <span class="pencil__body"></span>
+              <span class="pencil__wood"></span>
+              <span class="pencil__lead"></span>
+            </div>
+          </div>
+        </div>`;
+    }
+
+    // Pick the left-page art for a project. Default is pixel-art; a
+    // project can opt into a different scene via `artKind`.
+    function projectArt(p) {
+      if (p.artKind === "pencil") return pencilArt();
+      return pixelArt(p.art);
     }
 
     // Each project is a full-viewport spread, mirroring the Home book:
@@ -283,7 +348,7 @@ const LAND_MASK = [
       const num = String(i + 1).padStart(2, "0");
       return `
         <section class="spread" aria-label="${esc(p.name)}">
-          ${pixelArt()}
+          ${projectArt(p)}
           <div class="spread__spine" aria-hidden="true"></div>
           <div class="page--right">
             <p class="aspect__eyebrow">

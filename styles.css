@@ -295,6 +295,167 @@ body {
 }
 
 /* ============================================================
+   3D PENCIL WRITING ON PAPER (Projects left page — scribe).
+   Pure CSS, no image file. A sheet of paper lies back in 3D while
+   a pencil, held at a diagonal, drifts left->right and a graphite
+   line draws itself beneath the tip — looping, as if writing. The
+   whole scene is monochrome to match the night theme. Scoped under
+   .pencil-stage so it stays on the LEFT PAGE. Reduced motion freezes
+   the pencil mid-stroke with the line already drawn.
+
+   One knob (--u) scales the entire em-based scene to fit the page.
+   ============================================================ */
+.pencil-stage {
+  position: absolute; z-index: 1;
+  top: 0; bottom: 0; left: 0; width: 50%;      /* LEFT PAGE */
+  display: grid; place-items: center;
+  overflow: hidden; pointer-events: none;
+  perspective: 1200px;
+  --u: clamp(1.5px, 0.62vmin, 3.4px);          /* scene scale knob */
+}
+/* The 3D stage: tilted back so the paper reads as a surface, with a
+   slow idle float so the whole scene feels alive. */
+.pencil-scene {
+  position: relative;
+  width: calc(var(--u) * 150);
+  height: calc(var(--u) * 150);
+  transform-style: preserve-3d;
+  transform: rotateX(58deg) rotateZ(-32deg);
+  animation: pencilFloat 9s ease-in-out infinite;
+  filter: drop-shadow(0 calc(var(--u) * 6) calc(var(--u) * 10) rgba(0,0,0,0.5));
+}
+@keyframes pencilFloat {
+  0%,100% { transform: rotateX(58deg) rotateZ(-32deg) translateZ(0); }
+  50%     { transform: rotateX(55deg) rotateZ(-30deg) translateZ(calc(var(--u) * 4)); }
+}
+
+/* ---- the paper: a sheet sitting on the stage plane ---- */
+.paper {
+  position: absolute; inset: 0;
+  background:
+    linear-gradient(145deg, rgba(237,237,237,0.10), rgba(237,237,237,0.03));
+  border: 1px solid rgba(237,237,237,0.22);
+  border-radius: calc(var(--u) * 1.5);
+  box-shadow:
+    inset 0 0 calc(var(--u) * 12) rgba(237,237,237,0.05),
+    0 0 calc(var(--u) * 20) rgba(237,237,237,0.06);
+}
+/* faint pre-printed ruling lines on the sheet */
+.paper::before {
+  content: ''; position: absolute;
+  left: 8%; right: 8%; top: 22%; bottom: 18%;
+  background-image: repeating-linear-gradient(
+    to bottom,
+    rgba(237,237,237,0.14) 0, rgba(237,237,237,0.14) 1px,
+    transparent 1px, transparent calc(var(--u) * 18)
+  );
+}
+/* the graphite marks that "write themselves" — three ruled lines that
+   grow in width, staggered, then the loop restarts. Each line sits on
+   a ruling row. They share the pencil's stroke timing. */
+.paper__line {
+  position: absolute; left: 12%;
+  height: calc(var(--u) * 1.6);
+  width: 0;
+  background: linear-gradient(90deg,
+    rgba(237,237,237,0.95), rgba(237,237,237,0.6));
+  border-radius: 999px;
+  filter: drop-shadow(0 0 calc(var(--u) * 2) rgba(237,237,237,0.4));
+  animation: penWrite 6s ease-in-out infinite;
+}
+.paper__line:nth-child(1) { top: 30%; animation-delay: 0s;    }
+.paper__line:nth-child(2) { top: 44%; animation-delay: 2s;    }
+.paper__line:nth-child(3) { top: 58%; animation-delay: 4s;    }
+@keyframes penWrite {
+  0%            { width: 0;   opacity: 0.95; }
+  26%           { width: 70%; opacity: 0.95; }  /* stroke drawn */
+  30%, 92%      { width: 70%; opacity: 0.95; }  /* hold */
+  100%          { width: 70%; opacity: 0;    }  /* fade before loop */
+}
+
+/* ---- the pencil: barrel + sharpened wood + lead + ferrule + eraser,
+   lifted above the paper (translateZ) and drifting across it ---- */
+.pencil {
+  position: absolute;
+  left: 8%; top: 24%;
+  width: calc(var(--u) * 7);
+  height: calc(var(--u) * 86);
+  transform-style: preserve-3d;
+  transform-origin: 50% 100%;                 /* pivot at the tip */
+  /* stand the pencil up off the page, tip down, leaning as if held */
+  transform: translateZ(calc(var(--u) * 26)) rotateX(-60deg) rotate(14deg);
+  animation: pencilWriteMove 6s ease-in-out infinite;
+}
+/* the pencil tracks across the page in step with penWrite (same 6s) */
+@keyframes pencilWriteMove {
+  0%        { left: 10%; top: 26%; }
+  26%       { left: 62%; top: 26%; }   /* draws line 1 */
+  33%       { left: 10%; top: 38%; }   /* carriage return */
+  59%       { left: 62%; top: 38%; }
+  66%       { left: 10%; top: 50%; }
+  92%       { left: 62%; top: 50%; }
+  100%      { left: 10%; top: 26%; }
+}
+.pencil > * { position: absolute; left: 0; right: 0; }
+/* hexagonal barrel feel via a multi-stop lengthwise gradient (light
+   catching the top ridge, shading to the sides) */
+.pencil__body {
+  top: calc(var(--u) * 16); bottom: calc(var(--u) * 10);
+  background: linear-gradient(90deg,
+    rgba(237,237,237,0.25) 0%,
+    rgba(237,237,237,0.85) 30%,
+    rgba(237,237,237,0.95) 50%,
+    rgba(237,237,237,0.55) 70%,
+    rgba(237,237,237,0.2) 100%);
+  border-radius: calc(var(--u) * 1);
+}
+/* sharpened wooden cone (narrowing to the point) */
+.pencil__wood {
+  bottom: calc(var(--u) * 3); height: calc(var(--u) * 9);
+  background: linear-gradient(90deg,
+    rgba(237,237,237,0.2), rgba(237,237,237,0.7), rgba(237,237,237,0.2));
+  clip-path: polygon(14% 0, 86% 0, 56% 100%, 44% 100%);
+}
+/* graphite point */
+.pencil__lead {
+  bottom: 0; height: calc(var(--u) * 3.4);
+  background: linear-gradient(90deg,
+    rgba(237,237,237,0.3), #ffffff, rgba(237,237,237,0.3));
+  clip-path: polygon(40% 0, 60% 0, 52% 100%, 48% 100%);
+  filter: drop-shadow(0 0 calc(var(--u) * 2) rgba(237,237,237,0.6));
+}
+/* metal ferrule band near the top */
+.pencil__ferrule {
+  top: calc(var(--u) * 8); height: calc(var(--u) * 8);
+  background: repeating-linear-gradient(90deg,
+    rgba(237,237,237,0.4) 0, rgba(237,237,237,0.4) 1px,
+    rgba(237,237,237,0.9) 1px, rgba(237,237,237,0.9) 2px);
+  border-radius: calc(var(--u) * 0.5);
+}
+/* eraser cap */
+.pencil__eraser {
+  top: 0; height: calc(var(--u) * 9);
+  background: linear-gradient(90deg,
+    rgba(237,237,237,0.35), rgba(237,237,237,0.75), rgba(237,237,237,0.3));
+  border-radius: calc(var(--u) * 2) calc(var(--u) * 2) 0 0;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .pencil-scene { animation: none; }
+  .pencil { animation: none; left: 46%; top: 50%; }
+  .paper__line { animation: none; width: 70%; opacity: 0.9; }
+  .paper__line:nth-child(3) { width: 36%; }   /* last line mid-stroke */
+}
+
+/* Mobile: the spread stacks (art on top). Recentre + shrink the scene. */
+@media (max-width: 680px) {
+  .pencil-stage {
+    width: 100%; bottom: 50%;
+    --u: clamp(1.3px, 1.05vmin, 3px);
+  }
+}
+
+/* ============================================================
    THE BOOK — a vertical, scroll-snapping stack of spreads.
    Each .spread is one full-viewport "two-page" opening.
    ============================================================ */
