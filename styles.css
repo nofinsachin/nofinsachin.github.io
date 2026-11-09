@@ -373,28 +373,43 @@ body {
   100%          { width: 70%; opacity: 0;    }  /* fade before loop */
 }
 
-/* ---- the pencil: barrel + sharpened wood + lead + ferrule + eraser,
-   lifted above the paper (translateZ) and drifting across it ---- */
+/* ---- the pencil hangs from a zero-size ANCHOR. The anchor is the
+   point that rides along the lines (its left/top animate); the pencil
+   is attached to it at the TIP, so wherever the anchor goes, the tip
+   follows exactly — no projection guesswork. ---- */
+.pencil-anchor {
+  position: absolute;
+  left: 12%; top: 30%;            /* starts on line 1's left edge */
+  width: 0; height: 0;
+  transform-style: preserve-3d;
+  animation: pencilWriteMove 6s ease-in-out infinite;
+}
 .pencil {
   position: absolute;
-  left: 8%; top: 24%;
+  /* tip (bottom-centre) sits ON the anchor origin; the body rises up
+     and to the left from there */
+  left: calc(var(--u) * -3.5);
+  bottom: 0;
   width: calc(var(--u) * 7);
   height: calc(var(--u) * 86);
   transform-style: preserve-3d;
-  transform-origin: 50% 100%;                 /* pivot at the tip */
-  /* stand the pencil up off the page, tip down, leaning as if held */
-  transform: translateZ(calc(var(--u) * 26)) rotateX(-60deg) rotate(14deg);
-  animation: pencilWriteMove 6s ease-in-out infinite;
+  transform-origin: bottom center;            /* pivot at the tip */
+  /* stand the pencil up off the page, tip down, leaning as if held.
+     Because the origin is the tip, these rotations swing the body
+     around the tip without moving the tip. */
+  transform: rotateX(-58deg) rotate(14deg);
 }
-/* the pencil tracks across the page in step with penWrite (same 6s) */
+/* the ANCHOR tracks across the page in step with penWrite (same 6s).
+   The `top` values match the three line rows (30% / 44% / 58%) and the
+   `left` runs from each line's start (12%) to its drawn end (~54%). */
 @keyframes pencilWriteMove {
-  0%        { left: 10%; top: 26%; }
-  26%       { left: 62%; top: 26%; }   /* draws line 1 */
-  33%       { left: 10%; top: 38%; }   /* carriage return */
-  59%       { left: 62%; top: 38%; }
-  66%       { left: 10%; top: 50%; }
-  92%       { left: 62%; top: 50%; }
-  100%      { left: 10%; top: 26%; }
+  0%        { left: 12%; top: 30%; }
+  26%       { left: 54%; top: 30%; }   /* draws line 1 */
+  33%       { left: 12%; top: 44%; }   /* carriage return */
+  59%       { left: 54%; top: 44%; }   /* draws line 2 */
+  66%       { left: 12%; top: 58%; }
+  92%       { left: 54%; top: 58%; }   /* draws line 3 */
+  100%      { left: 12%; top: 30%; }
 }
 .pencil > * { position: absolute; left: 0; right: 0; }
 /* hexagonal barrel feel via a multi-stop lengthwise gradient (light
@@ -442,7 +457,8 @@ body {
 
 @media (prefers-reduced-motion: reduce) {
   .pencil-scene { animation: none; }
-  .pencil { animation: none; left: 46%; top: 50%; }
+  /* freeze the anchor at the leading edge of the half-drawn line 3 */
+  .pencil-anchor { animation: none; left: 48%; top: 58%; }
   .paper__line { animation: none; width: 70%; opacity: 0.9; }
   .paper__line:nth-child(3) { width: 36%; }   /* last line mid-stroke */
 }

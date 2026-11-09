@@ -316,12 +316,14 @@ const LAND_MASK = [
               <span class="paper__line"></span>
               <span class="paper__line"></span>
             </div>
-            <div class="pencil">
-              <span class="pencil__eraser"></span>
-              <span class="pencil__ferrule"></span>
-              <span class="pencil__body"></span>
-              <span class="pencil__wood"></span>
-              <span class="pencil__lead"></span>
+            <div class="pencil-anchor">
+              <div class="pencil">
+                <span class="pencil__eraser"></span>
+                <span class="pencil__ferrule"></span>
+                <span class="pencil__body"></span>
+                <span class="pencil__wood"></span>
+                <span class="pencil__lead"></span>
+              </div>
             </div>
           </div>
         </div>`;
