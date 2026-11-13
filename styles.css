@@ -6,7 +6,8 @@
   --text:  #EDEDED;
   --muted: #8A8A8A;
   --s-2: 16px;
-  --font:  "JetBrains Mono", ui-monospace, SFMono-Regular, Menlo, Consolas, monospace;
+  /* The site typeface. */
+  --font:  "Poppins", system-ui, -apple-system, Segoe UI, sans-serif;
 }
 
 * { box-sizing: border-box; }
@@ -30,7 +31,7 @@ body {
 .vignette {
   position: fixed; inset: 0; z-index: 3; pointer-events: none;
   background: radial-gradient(circle at 50% 50%,
-               rgba(0,0,0,0) 14%, rgba(0,0,0,0.98) 100%);
+               rgba(0,0,0,0) 38%, rgba(0,0,0,0.82) 100%);
 }
 .grain {
   position: fixed; inset: 0; z-index: 4; pointer-events: none;
@@ -82,11 +83,16 @@ body {
 /* Projects and Research both reuse the Home "book" (scroll-snap
    spreads) — the inner .book handles scrolling, so the view itself
    is a plain full-height layer. */
+#view-home,
 #view-projects,
 #view-research {
   position: relative; z-index: 2;   /* above bg-canvas, below vignette */
   height: 100vh;
 }
+/* Home is a near-blank landing — only the night backdrop + the CSS
+   train. The full-height layer gives the absolutely-positioned
+   .train-scene something to anchor to and clip against. */
+#view-home { overflow: hidden; }
 .view__inner {
   max-width: 1080px; margin: 0 auto;
   padding: 24vh 2.2rem 12vh;        /* clear the fixed tabs up top */
@@ -488,7 +494,7 @@ body {
   display: grid; grid-template-columns: 1fr 1fr;  /* left + right page */
 }
 
-/* Per-spread LEFT-PAGE canvas (the shape/hourglass/map art). It fills the
+/* Per-spread LEFT-PAGE canvas (the shape/map art). It fills the
    spread; the drawing code confines the art to the left page. */
 .spread__canvas {
   position: absolute; inset: 0; width: 100%; height: 100%;
@@ -637,6 +643,177 @@ body {
   .shimmer-stage { width: 100%; bottom: 50%; font-size: clamp(2px, 1.6vmin, 4px); }
 }
 
+/* ============================================================
+   POSTGRESQL (Services, spread 2) — a pure-CSS elephant in profile,
+   facing right (the PostgreSQL mascot). Built from rounded shapes with
+   soft gradient shading, in blue-greys. Idle motion: it breathes, the
+   ear flaps, the trunk swings, the tail swishes and the eye blinks.
+   All sizes are em, off .el's font-size. Decorative; LEFT PAGE.
+   ============================================================ */
+.pg-stage {
+  position: absolute; left: 0; top: 0; bottom: 0; width: 50%;
+  display: grid; place-items: center;
+  pointer-events: none;
+}
+.el {
+  position: relative;
+  width: 30em; height: 22em;
+  font-size: clamp(8px, min(1.25vw, 2.5vh), 18px);
+  translate: -4.5em 0;               /* room on the right for the raised trunk */
+  --light: #8db1d4; --mid: #5f86b0; --deep: #46688f; --far: #35506f;
+}
+.el span { position: absolute; display: block; box-sizing: border-box; }
+
+.el__shadow {
+  left: 3em; top: 19.2em; width: 24em; height: 2em;
+  background: radial-gradient(closest-side, rgba(0,0,0,0.55), transparent);
+  filter: blur(3px);
+}
+
+/* legs (the two "far" ones sit a little behind and darker) */
+.el__leg {
+  top: 11.5em; width: 4.4em; height: 8em;
+  background: linear-gradient(90deg, var(--mid), var(--deep));
+  border-radius: 1.6em 1.6em 1em 1em;
+}
+.el__leg::after {                                /* toenails */
+  content: ""; position: absolute; left: 12%; right: 12%; bottom: 0;
+  height: 0.9em; border-radius: 0.9em 0.9em 0.7em 0.7em;
+  background: #dfe8f3;
+}
+.el__leg--b { left: 5.2em; }
+.el__leg--f { left: 15.6em; }
+.el__leg--far { background: linear-gradient(90deg, var(--deep), var(--far)); }
+.el__leg--far.el__leg--b { left: 8.6em; }
+.el__leg--far.el__leg--f { left: 19em; }
+.el__leg--far::after { background: #aebccd; }
+
+.el__tail {
+  left: 3.6em; top: 8.2em; width: 0.6em; height: 5.4em;
+  background: var(--deep);
+  border-radius: 0.3em;
+  transform-origin: 50% 0;
+  transform: rotate(10deg);
+  animation: elTail 3.4s ease-in-out infinite;
+}
+.el__tail::after {                               /* tuft */
+  content: ""; position: absolute; left: -0.4em; bottom: -0.9em;
+  width: 1.4em; height: 1.8em; border-radius: 50% 50% 60% 60%;
+  background: var(--far);
+}
+
+.el__body {
+  left: 3.2em; top: 4.6em; width: 19.8em; height: 12em;
+  background: radial-gradient(ellipse at 38% 22%, var(--light), var(--mid) 52%, var(--deep));
+  border-radius: 9em 8em 5.5em 5.5em / 7.5em 7em 5em 5em;
+  transform-origin: 50% 100%;
+  animation: elBreathe 5s ease-in-out infinite;
+}
+
+.el__head {
+  left: 19.2em; top: 1.2em; width: 10.4em; height: 10.2em;
+  background: radial-gradient(circle at 42% 28%, var(--light), var(--mid) 62%, var(--deep));
+  border-radius: 50% 50% 46% 46% / 52% 52% 48% 48%;
+}
+
+/* trunk: an upper part, plus a lower part that curls forward */
+.el__trunk {
+  left: 26.4em; top: 6.6em; width: 3.4em; height: 6em;
+  background: linear-gradient(90deg, var(--mid), var(--deep));
+  border-radius: 1.4em 1.4em 1.2em 1.2em;
+  transform-origin: 50% 0;
+  animation: elTrunk 10s ease-in-out infinite;
+}
+.el__trunk2 {
+  left: 0.3em; top: 5.2em; width: 2.9em; height: 6em;
+  background: linear-gradient(90deg, var(--mid), var(--deep));
+  border-radius: 0.9em 0.9em 1.6em 1.6em;
+  transform-origin: 50% 0;
+  transform: rotate(-16deg);
+  animation: elCurl 10s ease-in-out infinite;
+}
+/* wrinkles on the trunk */
+.el__trunk2::before, .el__trunk::before {
+  content: ""; position: absolute; left: 12%; right: 12%; top: 38%;
+  height: 0.16em; border-radius: 0.1em;
+  background: rgba(0, 0, 0, 0.18);
+  box-shadow: 0 1em 0 rgba(0,0,0,0.16), 0 2em 0 rgba(0,0,0,0.14);
+}
+
+.el__tusk {
+  left: 25.3em; top: 9.6em; width: 1.05em; height: 3.8em;
+  background: linear-gradient(90deg, #fffaf0, #e9dfc8);
+  border-radius: 0.5em 0.5em 0.9em 0.9em;
+  transform: rotate(-22deg);
+}
+
+.el__ear {
+  left: 16.2em; top: 2.8em; width: 7.4em; height: 9.6em;
+  background: radial-gradient(ellipse at 40% 35%, #a3c1df 0, #6f94bd 45%, var(--deep));
+  border-radius: 48% 52% 50% 50% / 38% 38% 62% 62%;
+  box-shadow: inset 0 0 0 0.45em rgba(255,255,255,0.08), 0.2em 0.5em 1em rgba(0,0,0,0.3);
+  transform-origin: 85% 22%;
+  animation: elEar 10s ease-in-out infinite;
+}
+
+.el__eye {
+  left: 26em; top: 4.2em; width: 1.1em; height: 1.1em;
+  background: #0d1824; border-radius: 50%;
+  transform-origin: 50% 50%;
+  animation: elBlink 6s ease-in-out infinite;
+}
+.el__eye::after {                                /* catch-light */
+  content: ""; position: absolute; left: 0.2em; top: 0.15em;
+  width: 0.32em; height: 0.32em; border-radius: 50%; background: #fff;
+}
+
+@keyframes elBreathe { 0%,100% { transform: scale(1, 1); } 50% { transform: scale(1.008, 1.018); } }
+/* One 10s cycle: idle sway -> pull back -> trunk swings UP (trumpet) with a
+   little pulse -> hold -> lowers back to rest. The ear flaps while idle and
+   flares out during the lift. Negative angles swing the trunk forward/up. */
+@keyframes elTrunk {
+  0%   { transform: rotate(3deg); }
+  18%  { transform: rotate(-4deg); }
+  36%  { transform: rotate(3deg); }
+  44%  { transform: rotate(9deg);    animation-timing-function: cubic-bezier(.2,.7,.2,1); }
+  54%  { transform: rotate(-120deg); }
+  60%  { transform: rotate(-116deg); }
+  64%  { transform: rotate(-126deg); }
+  68%  { transform: rotate(-116deg); }
+  77%  { transform: rotate(-116deg); animation-timing-function: ease-in-out; }
+  90%  { transform: rotate(3deg); }
+  100% { transform: rotate(3deg); }
+}
+@keyframes elCurl {
+  0%   { transform: rotate(-22deg); }
+  18%  { transform: rotate(-6deg); }
+  36%  { transform: rotate(-22deg); }
+  44%  { transform: rotate(-28deg);  animation-timing-function: cubic-bezier(.2,.7,.2,1); }
+  54%  { transform: rotate(-45deg); }
+  60%  { transform: rotate(-48deg); }
+  64%  { transform: rotate(-56deg); }
+  68%  { transform: rotate(-48deg); }
+  77%  { transform: rotate(-45deg);  animation-timing-function: ease-in-out; }
+  90%  { transform: rotate(-22deg); }
+  100% { transform: rotate(-22deg); }
+}
+@keyframes elEar {
+  0%, 20%, 40% { transform: rotate(0deg); }
+  10%, 30%     { transform: rotate(-9deg); }
+  54%, 72%     { transform: rotate(-22deg); }
+  88%, 100%    { transform: rotate(0deg); }
+}
+@keyframes elTail  { 0%,100% { transform: rotate(14deg); } 50% { transform: rotate(-6deg); } }
+@keyframes elBlink { 0%,92%,100% { transform: scaleY(1); } 95% { transform: scaleY(0.1); } }
+
+@media (prefers-reduced-motion: reduce) {
+  .el__body, .el__ear, .el__trunk, .el__trunk2, .el__tail, .el__eye { animation: none; }
+}
+@media (max-width: 680px) {
+  .pg-stage { width: 100%; height: 50%; bottom: auto; }
+  .el { font-size: clamp(6px, min(2.4vw, 1.9vh), 13px); translate: -2em 0; }
+}
+
 /* Faint spine down the gutter of each spread */
 .spread__spine {
   position: absolute; z-index: 2; pointer-events: none;
@@ -647,6 +824,17 @@ body {
     rgba(237,237,237,0.18) 85%, transparent);
 }
 
+/* The AI spread sits 100px higher than the default centred layout. The brain
+   canvas is shifted in script.js (BRAIN.offsetY) so hover coordinates stay
+   correct; the text and spine are shifted here. */
+#spread-ai .page--right,
+#spread-ai .spread__spine { translate: 0 -100px; }
+
+/* PostgreSQL spread: elephant 30px higher, text (and gutter line) 110px. */
+#spread-postgres .pg-stage { translate: 0 -30px; }
+#spread-postgres .page--right,
+#spread-postgres .spread__spine { translate: 0 -110px; }
+
 /* RIGHT PAGE text */
 .page--right {
   grid-column: 2; z-index: 3;
@@ -655,31 +843,38 @@ body {
   text-align: left; padding: 0 6vw;
 }
 .aspect__eyebrow {
-  /* HEADLINE — the aspect title (big). */
+  /* HEADLINE — the aspect title. Dramatic, matching the Home hero:
+     same Inter/sans weight-class sizing and glow. */
   margin: 0 0 var(--s-2) 0;
-  color: var(--text); font-weight: 300;
-  font-size: clamp(1.5rem, 3.4vw, 2.4rem);
-  line-height: 1.25; letter-spacing: 0.02em;
-  max-width: 16ch; text-shadow: 0 0 26px rgba(237,237,237,0.14);
+  color: var(--text);
+  font-weight: 800;
+  font-size: clamp(2.2rem, 7vw, 5.5rem);   /* == .home-hero__title */
+  line-height: 1.04; letter-spacing: -0.02em;
+  max-width: 16ch; text-shadow: 0 0 40px rgba(237,237,237,0.22);
 }
+/* Dramatic word-by-word reveal for the aspect headline, mirroring the
+   Home hero. Words start hidden/blurred/lifted; they ease in when the
+   spread scrolls into view (script.js adds .is-visible to the spread),
+   staggered left-to-right via the per-word --i. */
+.aspect__eyebrow .word {
+  display: inline-block;
+  opacity: 0;
+  filter: blur(14px);
+  transform: translateY(0.5em) scale(0.96);
+}
+.spread.is-visible .aspect__eyebrow .word {
+  animation: wordReveal 1.5s cubic-bezier(0.2, 0.7, 0.2, 1) forwards;
+  animation-delay: calc(var(--i) * 0.6s);
+}
+/* The last word of each headline lands brighter, like the Home hero. */
+.aspect__eyebrow .word:last-child { text-shadow: 0 0 46px rgba(237,237,237,0.4); }
 .aspect__line {
-  /* CAPTION — the supporting line (small, muted). */
+  /* CAPTION — the supporting line (muted). */
   margin: 0; color: var(--muted); font-weight: 400;
-  font-size: clamp(0.72rem, 1.5vw, 0.9rem);
-  line-height: 1.5; letter-spacing: 0.04em;
+  font-size: clamp(0.95rem, 2vw, 1.25rem);
+  line-height: 1.55; letter-spacing: 0.03em;
   max-width: 34ch;
 }
-
-/* Scroll cue on the first spread */
-.scroll-cue {
-  position: absolute; z-index: 3; left: 50%; bottom: 4vh;
-  transform: translateX(-50%);
-  color: var(--muted); font-size: 0.7rem; letter-spacing: 0.22em;
-  text-transform: uppercase; text-align: center; pointer-events: none;
-}
-.scroll-cue span { display: block; margin-top: 6px; font-size: 1rem;
-  animation: bob 1.8s ease-in-out infinite; }
-@keyframes bob { 0%,100%{transform:translateY(0)} 50%{transform:translateY(5px)} }
 
 /* Mobile: stack the two pages (art on top, text below). */
 @media (max-width: 680px) {
@@ -695,5 +890,1010 @@ body {
 
 @media (prefers-reduced-motion: reduce) {
   .book { scroll-behavior: auto; }
-  .scroll-cue span { animation: none; }
+}
+
+/* ============================================================
+   ABOUT — a small photo (top-right), a big headline on the left, CSS
+   birds, and the Lego robot (see .lego-* below) on the right.
+   ============================================================ */
+#view-about {
+  position: relative; z-index: 2;   /* above bg-canvas, below vignette */
+  height: 100vh;
+}
+.about-panel {
+  position: relative;
+  width: 100%; height: 100vh;
+  display: grid;
+  /* Reserve the left ~46% for the intro headline; the terminal lives in
+     the right column. They sit close together (small centre gap) but
+     never overlap. On mobile this collapses (headline moves to the top —
+     see the max-width:680px block). */
+  grid-template-columns: minmax(0, 46%) minmax(0, 54%);
+  place-items: center;
+  padding: 6vh clamp(1.5rem, 5vw, 4rem) 4vh;
+}
+
+/* --- Photo: tucked into the TOP-RIGHT corner, aligned with the tab
+   bar (same ~1.4rem top / ~2.2rem right as the .tabs padding). --- */
+.about-photo {
+  position: absolute;
+  top: 1.2rem;                 /* line up with the nav tabs */
+  right: 2.2rem;               /* match the tab-bar right padding */
+  z-index: 4;
+}
+.about-photo img {
+  /* Smaller badge. object-fit:contain means the whole square shows —
+     never cropped — it just scales down. */
+  width: clamp(90px, 10vw, 132px);
+  height: auto;
+  object-fit: contain;
+  display: block;
+  border-radius: 12px;
+  border: 1px solid rgba(237,237,237,0.18);
+  box-shadow: 0 8px 30px rgba(0,0,0,0.5);
+  /* Monochrome to match the night aesthetic — remove for colour. */
+  filter: grayscale(1) contrast(1.03) brightness(0.95);
+}
+
+/* --- LEFT intro headline — sits in the empty left space, vertically
+   centred, balancing the tree on the right. --- */
+.about-intro {
+  position: absolute;
+  left: clamp(1.5rem, 5vw, 5rem);
+  top: clamp(5.5rem, 14vh, 9rem); transform: none;   /* anchored below the tabs; grows downward */
+  z-index: 3;
+  pointer-events: none;
+}
+.about-intro__line {
+  margin: 0;
+  max-width: 12ch;                   /* wraps to a few lines in the left half */
+  font-family: var(--font);          /* Poppins — same as the Home hero */
+  color: var(--text);
+  font-weight: 800;                  /* match the big page headlines */
+  font-size: clamp(2.2rem, min(7vw, 10.5vh), 5.5rem);   /* == other headings, capped by height so it never overflows */
+  line-height: 1.04;
+  letter-spacing: -0.02em;
+  text-shadow: 0 0 40px rgba(237,237,237,0.22);
+}
+/* Dramatic reveal: each word starts hidden/blurred/lifted, then eases in
+   left-to-right (mirrors the Home hero's wordReveal). */
+.about-intro__line .word {
+  display: inline-block;
+  opacity: 0;
+  filter: blur(14px);
+  transform: translateY(0.5em) scale(0.96);
+  animation: wordReveal 1.5s cubic-bezier(0.2, 0.7, 0.2, 1) forwards;
+  animation-delay: calc(0.3s + var(--i) * 0.5s);
+}
+/* The last word ("era.") lands brightest — the emphasis — with a slow
+   glow pulse for a little extra drama. */
+.about-intro__line .word:last-child {
+  text-shadow: 0 0 46px rgba(237,237,237,0.45);
+  animation: wordReveal 1.5s cubic-bezier(0.2, 0.7, 0.2, 1) forwards,
+             introGlow 3.2s ease-in-out calc(0.3s + 6 * 0.5s + 1.2s) infinite;
+}
+@keyframes introGlow {
+  0%, 100% { text-shadow: 0 0 30px rgba(237,237,237,0.3); }
+  50%      { text-shadow: 0 0 52px rgba(237,237,237,0.65); }
+}
+@media (prefers-reduced-motion: reduce) {
+  .about-intro__line .word {
+    animation: none; opacity: 1; filter: none; transform: none;
+  }
+}
+
+/* --- BIRDS — a small flock gliding across the sky. Each bird flies on
+   its own horizontal path at a set height/speed/scale (for depth) and
+   its wings flap on a fast loop. Monochrome line-style; decorative. --- */
+.about-birds {
+  position: absolute; inset: 0;
+  z-index: 3;                  /* above the tree, below the fixed vignette */
+  pointer-events: none;
+  overflow: hidden;
+}
+.bird {
+  position: absolute;
+  left: 0;
+  width: 40px;
+  color: rgba(237,237,237,0.7);
+  will-change: transform;
+}
+.bird svg { display: block; width: 100%; height: auto; overflow: visible; }
+.bird__wings {
+  fill: none;
+  stroke: currentColor;
+  stroke-width: 2;
+  stroke-linecap: round;
+  stroke-linejoin: round;
+  transform-box: fill-box;
+  transform-origin: 50% 100%;  /* flap pivots at the body (bottom-centre) */
+  animation: birdFlap 0.5s ease-in-out infinite;
+}
+@keyframes birdFlap {
+  0%, 100% { transform: scaleY(0.55); }   /* wings down */
+  50%      { transform: scaleY(1.1); }    /* wings up */
+}
+
+/* Each bird: a height (top), a size (scale) for depth, a flight duration
+   and a start delay, so the flock is spread out and never in lock-step.
+   birdFlyR = left→right; birdFlyL = right→left (mirrored). */
+.bird--1 { top: 16%; --s: 1;    animation: birdFlyR 19s linear infinite;            }
+.bird--2 { top: 26%; --s: 0.7;  animation: birdFlyR 26s linear infinite;  animation-delay: -6s;  }
+.bird--3 { top: 11%; --s: 0.5;  animation: birdFlyR 32s linear infinite;  animation-delay: -14s; }
+.bird--4 { top: 34%; --s: 0.85; animation: birdFlyL 23s linear infinite;  animation-delay: -3s;  }
+.bird--5 { top: 20%; --s: 0.6;  animation: birdFlyL 29s linear infinite;  animation-delay: -18s; }
+/* the smaller/faster ones flap quicker (parallax feel) */
+.bird--2 .bird__wings { animation-duration: 0.42s; }
+.bird--3 .bird__wings { animation-duration: 0.36s; }
+.bird--5 .bird__wings { animation-duration: 0.4s; }
+
+/* Fly across with a gentle vertical bob; stay hidden just off each edge.
+   translateX uses vw so they cross the whole viewport regardless of width. */
+@keyframes birdFlyR {
+  0%   { transform: translate(-12vw, 0)  scale(var(--s, 1)); opacity: 0; }
+  6%   { opacity: 1; }
+  50%  { transform: translate(55vw, -22px) scale(var(--s, 1)); }
+  94%  { opacity: 1; }
+  100% { transform: translate(120vw, 10px) scale(var(--s, 1)); opacity: 0; }
+}
+@keyframes birdFlyL {
+  0%   { transform: translate(120vw, 0)  scaleX(-1) scale(var(--s, 1)); opacity: 0; }
+  6%   { opacity: 1; }
+  50%  { transform: translate(45vw, -18px) scaleX(-1) scale(var(--s, 1)); }
+  94%  { opacity: 1; }
+  100% { transform: translate(-12vw, 12px) scaleX(-1) scale(var(--s, 1)); opacity: 0; }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .about-birds { display: none; }   /* no flight / flap when motion is reduced */
+}
+
+/* ---- Mobile: headline + photo stack on top. ---- */
+@media (max-width: 680px) {
+  .about-panel { grid-template-columns: 1fr; padding: 10vh 1.25rem 4vh; }
+  .about-intro {
+    top: clamp(4.5rem, 10vh, 7rem); transform: none;
+    left: 1rem; max-width: 70vw;
+  }
+  .about-intro__line { font-size: clamp(1.6rem, 8vw, 2.4rem); }
+  .about-photo { top: clamp(4.5rem, 10vh, 7rem); right: 1rem; }
+  .about-photo img { width: clamp(84px, 24vw, 120px); }
+}
+
+/* ============================================================
+   LEGO ROBOT (About, right side) — a platform plate drops in, then
+   bricks fall onto it and build a robot. Flat, straight-on view:
+   perfectly horizontal / vertical, studs drawn in profile. Bricks are
+   generated by legoRobot() in script.js. Muted steel-blue palette with
+   white eyes and a cyan chest light. Respects reduced motion.
+   ============================================================ */
+.lego-stage {
+  --u: clamp(16px, min(3vw, 5vh), 36px);        /* one brick */
+  position: absolute; z-index: 2;
+  right: clamp(3rem, 13vw, 14rem);
+  bottom: calc(7vh + 30px);
+  width: calc(var(--u) * var(--cols));
+  height: calc(var(--u) * (var(--rows) + 0.7));
+  pointer-events: none;
+}
+.lego-robot { position: relative; width: 100%; height: 100%; }
+.lego-robot.is-run { animation: legoCycle 15s linear 1 forwards; }
+/* whole scene holds, then fades before the next replay */
+@keyframes legoCycle {
+  0%, 86% { opacity: 1; }
+  96%     { opacity: 0; }
+  100%    { opacity: 0; }
+}
+
+.lego, .lego-plate {
+  position: absolute;
+  opacity: 0;                                    /* hidden until its drop */
+}
+.is-run .lego, .is-run .lego-plate {
+  animation: legoDrop 1.6s both;
+  animation-delay: var(--d);
+}
+@keyframes legoDrop {
+  0%   { translate: 0 -70vh; opacity: 0; animation-timing-function: cubic-bezier(.5, 0, .9, .45); }
+  12%  { opacity: 1; }
+  68%  { translate: 0 0;     opacity: 1; animation-timing-function: ease-out; }
+  80%  { translate: 0 -6px;  animation-timing-function: ease-in; }
+  92%  { translate: 0 0; }
+  100% { translate: 0 0;     opacity: 1; }
+}
+
+/* ---- brick: flat front face, bevelled, with a profile stud ---- */
+.lego {
+  left: calc(var(--x) * var(--u));
+  top:  calc(var(--y) * var(--u));
+  width: var(--u); height: var(--u);
+  box-sizing: border-box;
+  background: var(--c, #6f87a6);
+  box-shadow:
+    inset 0 0 0 1px rgba(0, 0, 0, 0.38),
+    inset 0 calc(var(--u) * 0.07) 0 rgba(255, 255, 255, 0.22),
+    inset 0 calc(var(--u) * -0.1) 0 rgba(0, 0, 0, 0.24);
+}
+.lego--stud::before {                           /* the stud, seen from the side */
+  content: ""; position: absolute;
+  left: 24%; width: 52%;
+  top: calc(var(--u) * -0.17); height: calc(var(--u) * 0.2);
+  background: var(--c, #6f87a6);
+  border-radius: 3px 3px 0 0;
+  box-shadow:
+    inset 0 0 0 1px rgba(0, 0, 0, 0.38),
+    inset 0 2px 0 rgba(255, 255, 255, 0.25);
+}
+.lego--h { --c: #9db6d3; }                      /* head: light steel */
+.lego--\# { --c: #5f86b2; }                    /* torso: steel blue */
+.lego--l { --c: #46607e; }
+.lego--a { --c: #8b929c; }                      /* antennae: grey */                      /* limbs: deep slate */
+.lego--E {                                      /* eyes: white, with an eyelid */
+  --c: #ffffff;
+  animation-name: legoDrop, legoGlowWhite;
+  animation-duration: 1.6s, 2.6s;
+  animation-delay: var(--d), 6.4s;              /* glow starts as the eyes open */
+  animation-iteration-count: 1, infinite;
+  animation-fill-mode: both, none;
+}
+/* The lid is a head-coloured cover, so the eye reads as a plain head
+   brick (closed) until the robot is built; then it lifts open, hesitates,
+   opens fully, and blinks once. */
+.lego--E::after {
+  content: ""; position: absolute; inset: 0;
+  background: #9db6d3;                          /* == .lego--h */
+  box-shadow: inset 0 0 0 1px rgba(0,0,0,0.38),
+              inset 0 calc(var(--u) * 0.07) 0 rgba(255,255,255,0.22),
+              inset 0 calc(var(--u) * -0.1) 0 rgba(0,0,0,0.24);
+  transform-origin: 50% 0;
+  transform: scaleY(1);
+}
+.is-run .lego--E::after {
+  animation: legoLid 7s both;
+  animation-delay: 6.2s;
+}
+@keyframes legoLid {
+  0%, 6%  { transform: scaleY(1); }
+  12%     { transform: scaleY(0.6);  animation-timing-function: ease-in-out; }
+  17%     { transform: scaleY(0.75); animation-timing-function: ease-out; }  /* hesitates */
+  30%     { transform: scaleY(0); }
+  66%     { transform: scaleY(0);    animation-timing-function: ease-in; }
+  70%     { transform: scaleY(1);    animation-timing-function: ease-out; }  /* blink */
+  76%, 100% { transform: scaleY(0); }
+}
+.lego--C {                                      /* chest light: cyan glow */
+  --c: #4fe3d2;
+  animation-name: legoDrop, legoGlowCyan;
+  animation-duration: 1.6s, 2.6s;
+  animation-delay: var(--d), calc(var(--d) + 1.6s);
+  animation-iteration-count: 1, infinite;
+  animation-fill-mode: both, none;
+}
+@keyframes legoGlowWhite {
+  0%, 100% { filter: drop-shadow(0 0 3px rgba(255,255,255,0.45)); }
+  50%      { filter: drop-shadow(0 0 12px rgba(255,255,255,0.95)); }
+}
+@keyframes legoGlowCyan {
+  0%, 100% { filter: drop-shadow(0 0 3px rgba(79,227,210,0.5)); }
+  50%      { filter: drop-shadow(0 0 12px rgba(79,227,210,1)); }
+}
+
+/* ---- the platform: a wide plate with seams and a thin accent line ---- */
+.lego-plate {
+  left: 0; top: calc(var(--u) * var(--rows));
+  width: calc(var(--u) * var(--cols)); height: calc(var(--u) * 0.7);
+  box-sizing: border-box;
+  background:
+    linear-gradient(to bottom, #4fe3d2 0, #4fe3d2 2px, transparent 2px),
+    repeating-linear-gradient(to right, transparent 0 calc(var(--u) - 1px), rgba(0,0,0,0.35) calc(var(--u) - 1px) var(--u)),
+    linear-gradient(to bottom, #3b4658, #272e3b);
+  border-radius: 2px;
+  box-shadow: 0 10px 30px rgba(0, 0, 0, 0.55),
+              0 0 24px rgba(79, 227, 210, 0.12);
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .lego-robot.is-run, .is-run .lego, .is-run .lego-plate,
+  .lego--E, .lego--C { animation: none !important; }
+  .lego--E::after { display: none; }
+  .lego, .lego-plate { opacity: 1; }
+}
+
+/* Mobile: centred under the headline. */
+@media (max-width: 680px) {
+  .lego-stage {
+    --u: clamp(10px, min(5vw, 3.2vh), 22px);
+    right: 50%; margin-right: calc(var(--u) * -7.5);
+    bottom: calc(3vh + 30px);
+  }
+}
+
+/* ============================================================
+   IT-EVOLUTION HOME — monochrome, pure-CSS, no colour.
+   Concept: a steam locomotive (the "engine of progress") pulls two
+   data carriages along a TIMELINE RAIL of computing eras, departing
+   the PAST (left) and driving toward the FUTURE (right). Everything is
+   drawn with borders/box-shadows in the site's off-white (--text), so
+   it reads as a line sketch on the night background. Purely decorative
+   (aria-hidden); respects prefers-reduced-motion.
+   ============================================================ */
+/* ---- Hero: a single dramatic line, centred up top, in Inter.
+   Each word fades/rises/unblurs in sequence as the Home screen
+   enters — a slow cinematic reveal. ---- */
+.home-hero {
+  position: absolute; z-index: 3; pointer-events: none;
+  left: 0; right: 0; top: 22vh;
+  display: flex; flex-direction: column; align-items: center;
+  text-align: center; padding: 0 2rem;
+}
+.home-hero__title {
+  margin: 0;
+  font-family: var(--font);   /* Poppins, the site typeface */
+  color: var(--text);
+  font-weight: 800;
+  font-size: clamp(2.2rem, 7vw, 5.5rem);
+  line-height: 1.04;
+  letter-spacing: -0.02em;
+  max-width: 16ch;
+  text-shadow: 0 0 40px rgba(237,237,237,0.22);
+}
+
+/* Each word starts hidden, blurred, pushed down & slightly scaled; it
+   then eases into place. The per-word --i staggers the start so the
+   line "writes" itself left to right, one word at a time, slowly. */
+.home-hero__title .word {
+  display: inline-block;
+  opacity: 0;
+  filter: blur(14px);
+  transform: translateY(0.5em) scale(0.96);
+  animation: wordReveal 1.5s cubic-bezier(0.2, 0.7, 0.2, 1) forwards;
+  animation-delay: calc(0.5s + var(--i) * 0.7s);
+}
+/* The final word lands brighter — the emphasis of the line. */
+.home-hero__title .word:last-child {
+  font-weight: 800;
+  text-shadow: 0 0 46px rgba(237,237,237,0.4);
+}
+@keyframes wordReveal {
+  0%   { opacity: 0;   filter: blur(14px); transform: translateY(0.5em) scale(0.96); }
+  60%  { opacity: 1; }
+  100% { opacity: 1;   filter: blur(0);    transform: translateY(0)     scale(1); }
+}
+
+/* Replaying the reveal: when the Home view is (re)entered, script.js
+   toggles .is-replaying off then on to restart the CSS animation. The
+   off state holds the words hidden for one frame. */
+.home-hero.reveal-reset .home-hero__title .word { animation: none; opacity: 0; }
+
+.train-scene {
+  --ink: var(--text);            /* off-white line colour, no hue */
+  --ride: 42vh;                  /* rail height above the bottom (blank screen) */
+  position: absolute; z-index: 2; pointer-events: none;
+  left: 0; right: 0; top: 0; bottom: 0;   /* fills the blank Home view */
+  overflow: hidden;
+}
+
+/* The rail: the computing TIMELINE the wheels ride on. */
+.rail {
+  position: absolute; left: 0; right: 0;
+  bottom: var(--ride); height: 1px;
+  background: linear-gradient(90deg,
+    transparent, rgba(237,237,237,0.45) 10%,
+    rgba(237,237,237,0.45) 90%, transparent);
+}
+
+/* ---- Era milestones: stations the train passes on its way forward.
+   Each sits at a horizontal position (--at) with a tick on the rail,
+   the year above and the era name below. Quiet, like the nav tabs. ---- */
+.eras {
+  position: absolute; inset: 0;
+  list-style: none; margin: 0; padding: 0;
+}
+.era {
+  position: absolute; top: -10px; left: var(--at);
+  transform: translateX(-50%);
+  display: flex; flex-direction: column; align-items: center;
+  padding: 10px 14px 0;
+  opacity: 0.4;                                  /* dim at rest */
+  transition: opacity 0.4s ease, scale 0.35s cubic-bezier(0.2,0.8,0.2,1);
+  pointer-events: none;                          /* train-driven only */
+}
+/* The ONE active state: the train has arrived. Ignites the milestone. */
+.era.is-lit {
+  opacity: 1; scale: 1.18;
+  z-index: 2;                                    /* its labels sit above neighbours */
+}
+
+/* Radiating halo ring behind the active milestone. */
+.era::after {
+  content: ""; position: absolute; top: -4px; left: 50%;
+  width: 14px; height: 14px; margin-left: -7px;
+  border: 1px solid rgba(237,237,237,0.8);
+  border-radius: 50%;
+  opacity: 0; transform: scale(0.4);
+  pointer-events: none;
+}
+.era.is-lit::after { animation: eraPulse 1.6s ease-out infinite; }
+@keyframes eraPulse {
+  0%   { opacity: 0.9; transform: scale(0.4); }
+  100% { opacity: 0;   transform: scale(3.4); }
+}
+
+/* Tick mark straddling the rail line — grows into a glowing beam when lit. */
+.era::before {
+  content: ""; width: 1px; height: 12px;
+  background: rgba(237,237,237,0.5);
+  margin-bottom: -5px;
+  transition: height 0.35s ease, background 0.35s ease, box-shadow 0.35s ease;
+}
+.era.is-lit::before {
+  height: 26px; background: var(--text);
+  box-shadow: 0 0 16px 2px rgba(237,237,237,0.85);
+}
+.era__year {
+  margin-top: 8px;
+  color: var(--text); font-size: 0.68rem;
+  letter-spacing: 0.14em; text-transform: uppercase;
+  white-space: nowrap;
+  transition: text-shadow 0.35s ease;
+}
+.era.is-lit .era__year { text-shadow: 0 0 20px rgba(237,237,237,0.9); }
+.era__name {
+  color: var(--muted); font-size: 0.58rem;
+  letter-spacing: 0.22em; text-transform: uppercase;
+  white-space: nowrap;
+  transition: color 0.35s ease;
+}
+.era.is-lit .era__name { color: var(--text); }
+
+/* ---- Art stage: no window chrome — just the era's artwork, floating
+   below the milestone and appearing dramatically when the TRAIN arrives
+   (CSS reacts to .is-lit). ---- */
+.era__popup {
+  position: absolute; top: 92px; left: 50%;
+  z-index: 4;
+  display: flex; align-items: center; justify-content: center;
+  transform: translateX(-50%) translateY(14px) scale(0.6);
+  transform-origin: top center;
+  opacity: 0;
+  pointer-events: none;
+  filter: drop-shadow(0 0 22px rgba(237,237,237,0.28));
+  transition: opacity 0.35s ease,
+              transform 0.5s cubic-bezier(0.18, 0.9, 0.2, 1.25);
+}
+
+/* Shared art root: off-white line-work on black, scaled up for drama.
+   The intrinsic 72×62 coordinate space is kept (so the shapes stay valid);
+   `scale` enlarges the whole piece. */
+.art {
+  --c: var(--text);                 /* line colour */
+  position: relative; display: block;
+  width: 72px; height: 62px;
+  scale: 1.55;
+}
+.art * { position: absolute; box-sizing: border-box; }
+
+/* The train arrives → the art bursts into view, bigger and glowing. */
+.era.is-lit > .era__popup {
+  opacity: 1; transform: translateX(-50%) translateY(0) scale(1);
+}
+
+/* Edge milestones anchor their art inward so it never clips off-screen. */
+.era--edge-l > .era__popup { left: 0; transform: translateX(-16%) translateY(14px) scale(0.6); }
+.era--edge-l.is-lit > .era__popup { transform: translateX(-16%) translateY(0) scale(1); }
+.era--edge-r > .era__popup { left: auto; right: 0; transform: translateX(16%) translateY(14px) scale(0.6); }
+.era--edge-r.is-lit > .era__popup { transform: translateX(16%) translateY(0) scale(1); }
+
+/* ============================================================
+   PER-ERA CSS ARTWORK (shown below each milestone).
+   All pure CSS — borders/shapes in off-white on black.
+   ============================================================ */
+
+/* ---- 1940s · MAINFRAME: a cabinet with two tape reels + panel lights ---- */
+.art--mainframe .mf__cab {
+  left: 10px; bottom: 0; width: 52px; height: 40px;
+  border: 1.5px solid var(--c); border-radius: 3px;
+}
+.art--mainframe .mf__reel {
+  top: 0; left: 16px; width: 16px; height: 16px;
+  border: 1.5px solid var(--c); border-radius: 50%;
+  background:
+    radial-gradient(circle, var(--c) 0 2px, transparent 2px);
+}
+.art--mainframe .mf__reel--2 { left: 40px; }
+/* reels sit on short spindles above the cabinet */
+.art--mainframe .mf__reel::after {
+  content: ""; position: absolute; left: 50%; bottom: -6px;
+  width: 1.5px; height: 6px; background: var(--c); transform: translateX(-50%);
+}
+.art--mainframe .mf__lights {
+  position: absolute; inset: 7px 7px auto 7px;
+  display: grid; grid-template-columns: repeat(3, 1fr); gap: 5px 7px;
+}
+.art--mainframe .mf__lights i {
+  position: relative; width: 6px; height: 4px;
+  border: 1px solid rgba(237,237,237,0.7);
+}
+.art--mainframe .mf__lights i:nth-child(2),
+.art--mainframe .mf__lights i:nth-child(5) { background: var(--c); }
+
+/* ---- 1970s · PERSONAL: a CRT monitor on a stand with a blinking cursor ---- */
+.art--pc .pc__screen {
+  left: 10px; top: 2px; width: 52px; height: 38px;
+  border: 1.5px solid var(--c); border-radius: 4px;
+}
+.art--pc .pc__cursor {
+  left: 8px; top: 9px; width: 10px; height: 2px; background: var(--c);
+  animation: pcBlink 1s steps(1) infinite;
+}
+@keyframes pcBlink { 0%,50% { opacity: 1; } 50.01%,100% { opacity: 0; } }
+.art--pc .pc__stand {
+  left: 50%; top: 40px; width: 2px; height: 8px;
+  background: var(--c); transform: translateX(-50%);
+}
+.art--pc .pc__base {
+  left: 50%; top: 48px; width: 30px; height: 2px;
+  background: var(--c); transform: translateX(-50%); border-radius: 2px;
+}
+
+/* ---- 1990s · INTERNET: a wire globe (circle + meridians + parallels) ---- */
+.art--globe {
+  width: 54px; height: 54px; margin: 0 auto;
+}
+.art--globe, .art--globe .globe__m, .art--globe .globe__p {
+  border-radius: 50%;
+}
+.art--globe { border: 1.5px solid var(--c); }
+.art--globe .globe__m,
+.art--globe .globe__p {
+  inset: -1.5px; border: 1.5px solid rgba(237,237,237,0.7);
+}
+.art--globe .globe__m    { transform: scaleX(0.5); }   /* vertical meridian */
+.art--globe .globe__m--2 { transform: scaleX(0.85); }
+.art--globe .globe__p    { transform: scaleY(0.5); }   /* horizontal parallel */
+.art--globe .globe__p--2 { transform: scaleY(0.85); }
+
+/* ---- 2010s · CLOUD: overlapping rounded lumps forming a cloud ---- */
+.art--cloud { width: 66px; height: 44px; }
+.art--cloud .cl__base {
+  left: 6px; bottom: 6px; width: 54px; height: 20px;
+  border: 1.5px solid var(--c); border-radius: 12px;
+  background: var(--bg);
+}
+.art--cloud .cl__lump {
+  border: 1.5px solid var(--c); border-radius: 50%;
+  background: var(--bg);
+}
+.art--cloud .cl__lump--l { left: 4px;  bottom: 14px; width: 22px; height: 22px; }
+.art--cloud .cl__lump--m { left: 20px; bottom: 18px; width: 30px; height: 30px; }
+.art--cloud .cl__lump--r { left: 40px; bottom: 14px; width: 22px; height: 22px; }
+/* a thin strip hides the lumps' lower arcs so they merge into one cloud */
+.art--cloud::after {
+  content: ""; position: absolute; left: 6px; right: 6px; bottom: 7px;
+  height: 14px; background: var(--bg);
+}
+
+/* ---- NOW · AI: a radiant 4-point sparkle with a soft pulsing ring ---- */
+.art--spark { width: 56px; height: 56px; }
+.art--spark .sp__star {
+  left: 50%; top: 50%; width: 40px; height: 40px;
+  transform: translate(-50%, -50%);
+  background: var(--c);
+  /* 4-point star via a star polygon clip */
+  clip-path: polygon(50% 0, 56% 44%, 100% 50%, 56% 56%, 50% 100%, 44% 56%, 0 50%, 44% 44%);
+  animation: sparkPulse 2.4s ease-in-out infinite;
+}
+.art--spark .sp__star--sm { width: 14px; height: 14px; opacity: 0.85; }
+.art--spark .sp__star--a { left: 20%; top: 26%; animation-delay: 0.4s; }
+.art--spark .sp__star--b { left: 78%; top: 68%; animation-delay: 0.9s; }
+.art--spark .sp__ring {
+  left: 50%; top: 50%; width: 46px; height: 46px;
+  transform: translate(-50%, -50%);
+  border: 1px solid rgba(237,237,237,0.4); border-radius: 50%;
+  animation: sparkRing 2.4s ease-in-out infinite;
+}
+@keyframes sparkPulse {
+  0%, 100% { transform: translate(-50%,-50%) scale(0.9) rotate(0deg); opacity: 0.85; }
+  50%      { transform: translate(-50%,-50%) scale(1.1) rotate(45deg); opacity: 1; }
+}
+@keyframes sparkRing {
+  0%, 100% { opacity: 0.2; transform: translate(-50%,-50%) scale(0.85); }
+  50%      { opacity: 0.5; transform: translate(-50%,-50%) scale(1.05); }
+}
+@media (prefers-reduced-motion: reduce) {
+  .art--pc .pc__cursor,
+  .art--spark .sp__star,
+  .art--spark .sp__ring { animation: none; }
+}
+
+/* The "Now / AI" milestone glows a touch brighter at rest — the present. */
+.era--now::before { background: rgba(237,237,237,0.8); }
+
+/* ---- Journey direction markers at the far edges of the timeline ---- */
+.journey-marker {
+  position: absolute; z-index: 2;
+  bottom: calc(var(--ride) + 46px);
+  color: var(--muted); font-size: 0.7rem;
+  letter-spacing: 0.24em; text-transform: uppercase;
+  opacity: 0.7;
+}
+.journey-marker--past   { left: 4vw; }
+.journey-marker--future {
+  right: 4vw; color: var(--text);
+  text-shadow: 0 0 18px rgba(237,237,237,0.22);
+  animation: futurePulse 3.4s ease-in-out infinite;
+}
+@keyframes futurePulse {
+  0%, 100% { opacity: 0.6; }
+  50%      { opacity: 1; }
+}
+
+/* The train rides the rail. Its horizontal position is JS-driven via
+/* The train rides the rail left→right on a loop — always moving toward
+   the future. Lifted so the WHEELS rest their bottoms exactly on the rail. */
+.train {
+  position: absolute;
+  bottom: calc(var(--ride) + 14px);  /* wheel bottoms land on the rail */
+  left: 0;
+  display: flex; align-items: flex-end;
+  transform: translateX(-120%);
+  animation: trainRoll 20s linear infinite;
+  will-change: transform;
+}
+@keyframes trainRoll {
+  from { transform: translateX(-120%); }      /* off-screen left */
+  to   { transform: translateX(100vw); }      /* off-screen right */
+}
+
+/* ---- Shared wheel look: open circle with two crossed spokes.
+   Both sizes share the SAME bottom baseline (-14px) so every wheel —
+   big drivers and small carriage wheels — rests on the one rail line. */
+.wheel {
+  position: absolute; bottom: -14px;
+  border: 1.5px solid var(--ink);
+  border-radius: 50%;
+  background: var(--bg);
+  animation: wheelSpin 1.1s linear infinite;
+}
+.wheel--big   { width: 30px; height: 30px; }
+.wheel--small { width: 18px; height: 18px; }
+.wheel .spoke {
+  position: absolute; left: 50%; top: 50%;
+  width: 100%; height: 1px; background: var(--ink);
+  transform: translate(-50%, -50%);
+}
+.wheel .spoke:nth-child(2) { transform: translate(-50%, -50%) rotate(90deg); }
+@keyframes wheelSpin { to { transform: rotate(360deg); } }
+
+/* ============== LOCOMOTIVE ============== */
+.loco {
+  position: relative;
+  width: 118px; height: 56px;
+}
+/* Boiler — the long horizontal body (outline only). */
+.loco__boiler {
+  position: absolute; left: 10px; bottom: 16px;
+  width: 78px; height: 26px;
+  border: 1.5px solid var(--ink);
+  border-radius: 4px 10px 4px 4px;
+  background: var(--bg);
+}
+/* Cab — the raised driver's compartment at the rear. Reaches the loco's
+   left (rear) edge so the coupling to the carriages meets the body. */
+.loco__cab {
+  position: absolute; left: 0; bottom: 16px;
+  width: 34px; height: 40px;
+  border: 1.5px solid var(--ink);
+  border-radius: 6px 6px 0 0;
+  background: var(--bg);
+}
+/* Rounded front of the boiler. */
+.loco__nose {
+  position: absolute; left: 82px; bottom: 16px;
+  width: 16px; height: 26px;
+  border: 1.5px solid var(--ink);
+  border-left: none;
+  border-radius: 0 13px 13px 0;
+  background: var(--bg);
+}
+/* Cowcatcher — the little slanted wedge at the very front. */
+.loco__cowcatcher {
+  position: absolute; left: 96px; bottom: 2px;
+  width: 0; height: 0;
+  border-bottom: 16px solid var(--ink);
+  border-right: 12px solid transparent;
+  opacity: 0.85;
+}
+/* Headlight — a soft lamp on the loco's nose casting a cone down the
+   track ahead (to the right, the direction of travel / the future). */
+.loco__headlight {
+  position: absolute; left: 100px; bottom: 30px;
+  width: 6px; height: 6px; border-radius: 50%;
+  background: rgba(237,237,237,0.95);
+  box-shadow: 0 0 8px 2px rgba(237,237,237,0.6);
+}
+.loco__headlight::after {
+  content: ""; position: absolute;
+  left: 4px; top: 50%;
+  width: 150px; height: 70px;
+  transform: translateY(-50%);
+  /* a cone of light fanning forward, fading out */
+  background: radial-gradient(ellipse 100% 60% at 0% 50%,
+     rgba(237,237,237,0.16), rgba(237,237,237,0.04) 40%, transparent 72%);
+  clip-path: polygon(0% 42%, 100% 0%, 100% 100%, 0% 58%);
+  pointer-events: none;
+}
+/* Funnel (chimney) rising from the boiler. */
+.loco__funnel {
+  position: absolute; left: 70px; bottom: 42px;
+  width: 12px; height: 14px;
+  border: 1.5px solid var(--ink);
+  border-bottom: none;
+  border-radius: 3px 3px 0 0;
+  background: var(--bg);
+}
+/* Steam dome — a small bump on the boiler top. */
+.loco__dome {
+  position: absolute; left: 50px; bottom: 42px;
+  width: 12px; height: 8px;
+  border: 1.5px solid var(--ink);
+  border-bottom: none;
+  border-radius: 6px 6px 0 0;
+  background: var(--bg);
+}
+
+/* Smoke puffs rising + drifting back from the funnel. */
+.puff {
+  position: absolute; left: 2px; bottom: 12px;
+  width: 8px; height: 8px;
+  border: 1px solid rgba(237,237,237,0.55);
+  border-radius: 50%;
+  background: transparent;
+  opacity: 0;
+  animation: puffRise 2.4s ease-out infinite;
+}
+.puff:nth-child(2) { animation-delay: 0.8s; }
+.puff:nth-child(3) { animation-delay: 1.6s; }
+@keyframes puffRise {
+  0%   { transform: translate(0, 0) scale(0.5);  opacity: 0; }
+  20%  { opacity: 0.6; }
+  100% { transform: translate(-26px, -46px) scale(1.8); opacity: 0; }
+}
+
+/* Loco wheels: two big drivers + a small leading wheel. */
+.loco .wheel--big            { left: 16px; }
+.loco .wheel--big.wheel--2   { left: 50px; }
+.loco .wheel--small.wheel--3 { left: 86px; }
+
+/* ============== CARRIAGES ============== */
+.car {
+  position: relative;
+  width: 86px; height: 40px;
+  margin-bottom: 0;
+  border: 1.5px solid var(--ink);
+  border-radius: 6px;
+  background: var(--bg);
+  display: flex; align-items: center; justify-content: space-around;
+  padding: 0 8px;
+}
+/* Each carriage carries a small "payload" of the IT journey — binary,
+   code, a shell prompt — rendered as tiny monospace glyphs in windows. */
+.car__payload {
+  min-width: 18px; height: 16px;
+  display: grid; place-items: center;
+  border: 1px solid rgba(237, 237, 237, 0.55);
+  border-radius: 2px;
+  background: var(--bg);
+  color: var(--ink);
+  font-family: var(--font);
+  font-size: 0.42rem; line-height: 1;
+  letter-spacing: 0.02em;
+}
+.car .wheel--small          { left: 14px; }
+.car .wheel--small.wheel--2 { left: 54px; }
+
+/* Coupling bar linking car <-> car <-> loco. Anchored to a shared
+   chassis height (just above the wheels) and widened with small negative
+   side margins so it tucks under the bodies on both sides — this closes
+   the gap between the lifted locomotive body and the lower carriages. */
+.coupling {
+  position: relative;
+  align-self: flex-end;
+  width: 14px; height: 2px;
+  margin: 0 -2px 18px -2px;
+  background: var(--ink);
+  z-index: -1;                 /* sits behind the car/loco bodies */
+}
+
+/* Mobile: shrink the train, raise the rail toward mid-screen, and
+   thin out the timeline so the era labels don't collide. Scale via the
+   `scale` property so it composes with the train's translateX. */
+@media (max-width: 680px) {
+  .train-scene { --ride: 46vh; }
+  .train { scale: 0.72; transform-origin: left bottom; }
+  .home-hero { top: 16vh; }
+  .era__name { display: none; }            /* keep just the year ticks */
+  .era__year { font-size: 0.6rem; letter-spacing: 0.08em; }
+  .journey-marker { font-size: 0.6rem; letter-spacing: 0.16em; }
+}
+
+/* Reduced motion: park the train mid-timeline (Now · AI lit), stop
+   wheels, smoke, and the future pulse. */
+@media (prefers-reduced-motion: reduce) {
+  .train { animation: none; transform: translateX(24vw); }
+  .wheel { animation: none; }
+  .puff  { animation: none; opacity: 0; }
+  .journey-marker--future { animation: none; opacity: 0.9; }
+  .era { transition: none; opacity: 0.55; }
+  /* Static scene: the engine is parked at the present — light Now · AI. */
+  .era--now { opacity: 1; scale: 1.12; }
+  .era--now::before { height: 20px; background: var(--text); }
+  .era--now .era__name { color: var(--text); }
+  /* Show the hero line immediately — no blur, rise, or stagger. */
+  .home-hero__title .word {
+    animation: none; opacity: 1; filter: none; transform: none;
+  }
+  /* Same for the dramatic About spread titles. */
+  .aspect__eyebrow .word,
+  .spread.is-visible .aspect__eyebrow .word {
+    animation: none; opacity: 1; filter: none; transform: none;
+  }
+}
+
+
+/* ============================================================
+   POLISH PASS — accessibility, micro-interactions, finishing
+   touches. Kept in one block so it's easy to review. Everything
+   here respects the monochrome night aesthetic and degrades
+   gracefully under prefers-reduced-motion (see the guard below).
+   ============================================================ */
+
+/* --- Text selection: a quiet off-white wash, not the OS blue. --- */
+::selection { background: rgba(237,237,237,0.22); color: #fff; }
+
+/* --- Keyboard focus: a soft, rounded off-white ring on every
+   interactive element. Only shows for keyboard users (:focus-visible),
+   never on mouse click — so it never intrudes on the night look. --- */
+a:focus-visible,
+button:focus-visible,
+[tabindex]:focus-visible {
+  outline: 2px solid rgba(237,237,237,0.85);
+  outline-offset: 3px;
+  border-radius: 3px;
+}
+/* Tabs get the ring slightly tucked in so it hugs the label. */
+.tab:focus-visible { outline-offset: 5px; }
+
+/* --- Tabs: a subtle underline that grows from the centre on hover /
+   focus, in addition to the existing active underline. Gives the quiet
+   nav a touch of life without adding a visible "bar". --- */
+.tab::before {
+  content: ""; position: absolute;
+  left: 50%; right: 50%; bottom: -4px; height: 1px;
+  background: rgba(237,237,237,0.5);
+  transition: left 0.28s cubic-bezier(0.2,0.8,0.2,1),
+              right 0.28s cubic-bezier(0.2,0.8,0.2,1);
+}
+.tab:hover::before,
+.tab:focus-visible::before { left: 0; right: 0; }
+.tab.is-active::before { content: none; }   /* active uses its own solid underline */
+
+/* --- Home hero: the final word gets a slow, gentle glow pulse once the
+   line has finished revealing — light breathing through the type. This
+   composes with the existing text-shadow (set at rule 1460) rather than
+   fighting it, so the emphasis stays intact. --- */
+.home-hero__title .word:last-child {
+  animation:
+    wordReveal 1.5s cubic-bezier(0.2, 0.7, 0.2, 1) forwards,
+    heroGlow 7s ease-in-out 4.8s infinite;
+}
+@keyframes heroGlow {
+  0%, 100% { text-shadow: 0 0 30px rgba(237,237,237,0.35); }
+  50%      { text-shadow: 0 0 56px rgba(237,237,237,0.72),
+                          0 0 22px rgba(237,237,237,0.4); }
+}
+
+/* --- Project / Research right-page metadata: fade + rise in as a group
+   once the spread scrolls into view, just after the headline words. A
+   gentle settle so the detail doesn't pop in cold. --- */
+.spread .page--right .project__status,
+.spread .page--right .aspect__line,
+.spread .page--right .project__summary,
+.spread .page--right .research-item__abstract,
+.spread .page--right .research-item__angle,
+.spread .page--right .project-card__tags,
+.spread .page--right .project-card__links {
+  opacity: 0;
+  transform: translateY(10px);
+}
+.spread.is-visible .page--right .project__status,
+.spread.is-visible .page--right .aspect__line,
+.spread.is-visible .page--right .project__summary,
+.spread.is-visible .page--right .research-item__abstract,
+.spread.is-visible .page--right .research-item__angle,
+.spread.is-visible .page--right .project-card__tags,
+.spread.is-visible .page--right .project-card__links {
+  animation: metaRise 0.9s cubic-bezier(0.2, 0.7, 0.2, 1) forwards;
+}
+.spread.is-visible .page--right .project__status        { animation-delay: 0.55s; }
+.spread.is-visible .page--right .aspect__line            { animation-delay: 0.65s; }
+.spread.is-visible .page--right .project__summary        { animation-delay: 0.78s; }
+.spread.is-visible .page--right .research-item__abstract { animation-delay: 0.78s; }
+.spread.is-visible .page--right .research-item__angle    { animation-delay: 0.9s; }
+.spread.is-visible .page--right .project-card__tags      { animation-delay: 1.0s; }
+.spread.is-visible .page--right .project-card__links     { animation-delay: 1.12s; }
+@keyframes metaRise {
+  0%   { opacity: 0; transform: translateY(10px); }
+  100% { opacity: 1; transform: translateY(0); }
+}
+
+/* --- Tag pills: a touch of lift + brighter border on hover of the
+   card, so the metadata feels interactive and alive. --- */
+.project-card__tags li {
+  transition: border-color 0.25s ease, color 0.25s ease, transform 0.25s ease;
+}
+.page--right:hover .project-card__tags li {
+  border-color: rgba(237,237,237,0.28);
+}
+.project-card__tags li:hover {
+  color: var(--text);
+  border-color: rgba(237,237,237,0.55);
+  transform: translateY(-1px);
+}
+
+/* --- Links: the underline now wipes in from the left rather than just
+   fading, and the label nudges up a hair — a crisper affordance. --- */
+.project-card__link {
+  position: relative;
+  padding-bottom: 2px;
+  border-bottom: none;                 /* replaced by the ::after wipe */
+  transition: color 0.25s ease, transform 0.25s ease;
+}
+.project-card__link::after {
+  content: ""; position: absolute; left: 0; bottom: 0;
+  width: 100%; height: 1px; background: var(--text);
+  transform: scaleX(0); transform-origin: left;
+  transition: transform 0.3s cubic-bezier(0.2,0.8,0.2,1);
+}
+.project-card__link:hover,
+.project-card__link:focus-visible { color: var(--text); transform: translateY(-1px); }
+.project-card__link:hover::after,
+.project-card__link:focus-visible::after { transform: scaleX(1); }
+.project-card__link[aria-disabled="true"]::after { content: none; }
+
+/* --- Photo badge: a quiet lift + de-desaturate on hover, so the About
+   portrait subtly "warms" when you reach for it. --- */
+.about-photo img {
+  transition: filter 0.4s ease, transform 0.4s ease, box-shadow 0.4s ease;
+}
+.about-photo img:hover {
+  filter: grayscale(0.55) contrast(1.05) brightness(1);
+  transform: translateY(-2px) scale(1.02);
+  box-shadow: 0 12px 38px rgba(0,0,0,0.6);
+}
+
+/* --- Reduced-motion guard for everything added above: show final
+   states, no sheen / rise / lift animations. --- */
+@media (prefers-reduced-motion: reduce) {
+  .home-hero__title .word:last-child { animation: none; }
+  .tab::before { transition: none; }
+  .spread .page--right .project__status,
+  .spread .page--right .aspect__line,
+  .spread .page--right .project__summary,
+  .spread .page--right .research-item__abstract,
+  .spread .page--right .research-item__angle,
+  .spread .page--right .project-card__tags,
+  .spread .page--right .project-card__links,
+  .spread.is-visible .page--right .project__status,
+  .spread.is-visible .page--right .aspect__line,
+  .spread.is-visible .page--right .project__summary,
+  .spread.is-visible .page--right .research-item__abstract,
+  .spread.is-visible .page--right .research-item__angle,
+  .spread.is-visible .page--right .project-card__tags,
+  .spread.is-visible .page--right .project-card__links {
+    animation: none; opacity: 1; transform: none;
+  }
+  .project-card__tags li,
+  .project-card__link,
+  .about-photo img { transition: none; }
 }

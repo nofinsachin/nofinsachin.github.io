@@ -26,10 +26,11 @@
   <!-- ============ TERMINAL FONT (only external dependency) ============ -->
   <link rel="preconnect" href="https://fonts.googleapis.com" />
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
-  <link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@300;400;500&display=swap" rel="stylesheet" />
+  <!-- Poppins — the site typeface. -->
+  <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700;800&display=swap" rel="stylesheet" />
 
   <!-- Site styles -->
-  <link rel="stylesheet" href="styles.css" />
+  <link rel="stylesheet" href="styles.css?v=34" />
 </head>
 
 <body>
@@ -39,6 +40,8 @@
   <!-- Top tabs — transparent, blends into the night background. -->
   <nav class="tabs" aria-label="Primary">
     <a class="tab is-active" href="#" data-tab="home" aria-current="true">Home</a>
+    <a class="tab" href="#" data-tab="about">About</a>
+    <a class="tab" href="#" data-tab="services">Services</a>
     <a class="tab" href="#" data-tab="projects">Projects</a>
     <a class="tab" href="#" data-tab="research">Research</a>
   </nav>
@@ -49,45 +52,202 @@
        the original scroll-snapping book.
        ============================================================ -->
 
-  <!-- ===== HOME VIEW — the scroll-snapping book of spreads ===== -->
-  <main class="view is-active" id="view-home" data-view="home">
-  <div class="book" id="book">
+  <!-- ===== HOME VIEW — the IT-evolution landing. A quiet title, then a
+       pure-CSS train riding a *timeline rail* of computing eras: it
+       departs the PAST on the left and drives toward the FUTURE on the
+       right. Monochrome, decorative, no images. ===== -->
+  <main class="view is-active" id="view-home" data-view="home" aria-label="Home">
 
-    <!-- ===== SPREAD 1 — Experience (hourglass) ===== -->
-    <section class="spread" id="spread-experience" data-spread="hourglass" aria-label="Experience">
-      <canvas class="spread__canvas" aria-hidden="true"></canvas>
-      <div class="spread__spine" aria-hidden="true"></div>
-      <div class="page--right">
-        <p class="aspect__eyebrow"></p>
-        <h1 class="aspect__line"></h1>
-      </div>
-      <div class="scroll-cue">Scroll<span aria-hidden="true">↓</span></div>
-    </section>
+    <!-- Title block — a single dramatic line, revealed word by word as
+         the Home screen enters. Rendered in Inter. -->
+    <header class="home-hero">
+      <h1 class="home-hero__title">
+        <span class="word" style="--i:0">All</span>
+        <span class="word" style="--i:1">aboard</span>
+        <span class="word" style="--i:2">the</span>
+        <span class="word" style="--i:3">compute</span>
+        <span class="word" style="--i:4">evolution.</span>
+      </h1>
+    </header>
 
-    <!-- ===== SPREAD 2 — DevOps & Platform Engineering (shimmer polyhedron) ===== -->
-    <section class="spread" id="spread-devops" data-spread="shimmer" aria-label="DevOps and Platform Engineering">
-      <!-- Left-page 3D scene: a slowly spinning, shimmering polyhedron.
-           Adapted from shimmer.css. Purely decorative. -->
-      <div class="shimmer-stage" aria-hidden="true">
-        <div class="scene">
-          <div class="pivot">
-            <div class="starHedron">
-              <div class="pentagon lid"><span class="triangle"></span><span class="triangle"></span><span class="triangle"></span><span class="triangle"></span><span class="triangle"></span></div>
-              <div class="pentagon lid"><span class="triangle"></span><span class="triangle"></span><span class="triangle"></span><span class="triangle"></span><span class="triangle"></span></div>
-              <div class="pentagon side"><span class="triangle"></span><span class="triangle"></span><span class="triangle"></span><span class="triangle"></span><span class="triangle"></span></div>
-              <div class="pentagon side"><span class="triangle"></span><span class="triangle"></span><span class="triangle"></span><span class="triangle"></span><span class="triangle"></span></div>
-              <div class="pentagon side"><span class="triangle"></span><span class="triangle"></span><span class="triangle"></span><span class="triangle"></span><span class="triangle"></span></div>
-              <div class="pentagon side"><span class="triangle"></span><span class="triangle"></span><span class="triangle"></span><span class="triangle"></span><span class="triangle"></span></div>
-              <div class="pentagon side"><span class="triangle"></span><span class="triangle"></span><span class="triangle"></span><span class="triangle"></span><span class="triangle"></span></div>
-              <div class="pentagon side"><span class="triangle"></span><span class="triangle"></span><span class="triangle"></span><span class="triangle"></span><span class="triangle"></span></div>
-              <div class="pentagon side"><span class="triangle"></span><span class="triangle"></span><span class="triangle"></span><span class="triangle"></span><span class="triangle"></span></div>
-              <div class="pentagon side"><span class="triangle"></span><span class="triangle"></span><span class="triangle"></span><span class="triangle"></span><span class="triangle"></span></div>
-              <div class="pentagon side"><span class="triangle"></span><span class="triangle"></span><span class="triangle"></span><span class="triangle"></span><span class="triangle"></span></div>
-              <div class="pentagon side"><span class="triangle"></span><span class="triangle"></span><span class="triangle"></span><span class="triangle"></span><span class="triangle"></span></div>
-            </div>
+    <!-- The journey: a timeline rail of eras with a train travelling it. -->
+    <div class="train-scene" aria-hidden="true">
+
+      <!-- Where it came from / where it's going. -->
+      <span class="journey-marker journey-marker--past">&larr;&nbsp;Past</span>
+      <span class="journey-marker journey-marker--future">Future&nbsp;&rarr;</span>
+
+      <!-- The train: three data carriages trailing behind the steam
+           locomotive, which LEADS at the front (right) pulling them
+           toward the future. Order here is back-to-front. -->
+      <div class="train">
+        <!-- Rear carriage -->
+        <div class="car">
+          <span class="car__payload">01</span><span class="car__payload">10</span><span class="car__payload">11</span>
+          <div class="wheel wheel--small"><span class="spoke"></span><span class="spoke"></span></div>
+          <div class="wheel wheel--small wheel--2"><span class="spoke"></span><span class="spoke"></span></div>
+        </div>
+        <div class="coupling"></div>
+        <!-- Middle carriage (the added compartment) -->
+        <div class="car">
+          <span class="car__payload">&lt;/&gt;</span><span class="car__payload">{ }</span><span class="car__payload">&gt;_</span>
+          <div class="wheel wheel--small"><span class="spoke"></span><span class="spoke"></span></div>
+          <div class="wheel wheel--small wheel--2"><span class="spoke"></span><span class="spoke"></span></div>
+        </div>
+        <div class="coupling"></div>
+        <!-- Front carriage (nearest the engine) -->
+        <div class="car">
+          <span class="car__payload">AI</span><span class="car__payload">ML</span><span class="car__payload">∞</span>
+          <div class="wheel wheel--small"><span class="spoke"></span><span class="spoke"></span></div>
+          <div class="wheel wheel--small wheel--2"><span class="spoke"></span><span class="spoke"></span></div>
+        </div>
+        <div class="coupling"></div>
+        <!-- Steam locomotive — the engine pulling IT forward (leads). -->
+        <div class="loco">
+          <div class="loco__cab"></div>
+          <div class="loco__boiler"></div>
+          <div class="loco__nose"></div>
+          <div class="loco__cowcatcher"></div>
+          <div class="loco__headlight" aria-hidden="true"></div>
+          <div class="loco__funnel">
+            <span class="puff"></span>
+            <span class="puff"></span>
+            <span class="puff"></span>
           </div>
+          <div class="loco__dome"></div>
+          <div class="wheel wheel--big"><span class="spoke"></span><span class="spoke"></span></div>
+          <div class="wheel wheel--big wheel--2"><span class="spoke"></span><span class="spoke"></span></div>
+          <div class="wheel wheel--small wheel--3"><span class="spoke"></span><span class="spoke"></span></div>
         </div>
       </div>
+
+      <!-- Timeline rail the train rides on, with era milestones. As the
+           train arrives at a milestone, a small TUI window pops open below
+           it showing a pure-CSS artwork for that era. -->
+      <div class="rail">
+        <ul class="eras">
+          <li class="era" style="--at: 12%"  data-flow="01">
+            <span class="era__year">1940s</span><span class="era__name">Mainframe</span>
+            <span class="era__popup" role="status">
+              <span class="art art--mainframe" aria-hidden="true">
+                <span class="mf__reel"></span><span class="mf__reel mf__reel--2"></span>
+                <span class="mf__cab">
+                  <span class="mf__lights"><i></i><i></i><i></i><i></i><i></i><i></i></span>
+                </span>
+              </span>
+            </span>
+          </li>
+          <li class="era" style="--at: 26%" data-flow="01=+*">
+            <span class="era__year">1970s</span><span class="era__name">Personal</span>
+            <span class="era__popup" role="status">
+              <span class="art art--pc" aria-hidden="true">
+                <span class="pc__screen"><span class="pc__cursor"></span></span>
+                <span class="pc__stand"></span><span class="pc__base"></span>
+              </span>
+            </span>
+          </li>
+          <li class="era" style="--at: 46%" data-flow="</>{}#@">
+            <span class="era__year">1990s</span><span class="era__name">Internet</span>
+            <span class="era__popup" role="status">
+              <span class="art art--globe" aria-hidden="true">
+                <span class="globe__m"></span><span class="globe__m globe__m--2"></span>
+                <span class="globe__p"></span><span class="globe__p globe__p--2"></span>
+              </span>
+            </span>
+          </li>
+          <li class="era" style="--at: 66%" data-flow="&#9729;&#8645;{}/">
+            <span class="era__year">2010s</span><span class="era__name">Cloud</span>
+            <span class="era__popup" role="status">
+              <span class="art art--cloud" aria-hidden="true">
+                <span class="cl__base"></span>
+                <span class="cl__lump cl__lump--l"></span>
+                <span class="cl__lump cl__lump--m"></span>
+                <span class="cl__lump cl__lump--r"></span>
+              </span>
+            </span>
+          </li>
+          <li class="era era--now era--edge-r" style="--at: 84%" data-flow="AI01&#8734;&#9671;">
+            <span class="era__year">Now</span><span class="era__name">AI</span>
+            <span class="era__popup" role="status">
+              <span class="art art--spark" aria-hidden="true">
+                <span class="sp__star"></span>
+                <span class="sp__star sp__star--sm sp__star--a"></span>
+                <span class="sp__star sp__star--sm sp__star--b"></span>
+                <span class="sp__ring"></span>
+              </span>
+            </span>
+          </li>
+        </ul>
+      </div>
+    </div>
+  </main>
+
+  <!-- ===== ABOUT VIEW — a small photo on the LEFT, and on the RIGHT a
+       pure-CSS "terminal (TUI)": a shell session that types itself out,
+       running a few commands to print a short bio and a `tree` of career
+       milestones before resting at a blinking caret. Speaks the same
+       terminal language as the Home compute-train and pixel-art projects.
+       No body text. ===== -->
+  <main class="view" id="view-about" data-view="about" aria-label="About" hidden>
+    <section class="about-panel" id="spread-portrait" data-spread="portrait" aria-label="About">
+      <!-- LEFT (~30%): a small, framed photo. -->
+      <div class="about-photo">
+        <img src="me.jpg?v=2" alt="Sachin" width="320" height="320"
+             loading="lazy" decoding="async" />
+      </div>
+
+      <!-- LEFT headline — a short statement in the otherwise-empty left
+           space, balancing the tree on the right. Words reveal one by one
+           (matching the Home hero), the last word landing emphasised. -->
+      <div class="about-intro">
+        <h1 class="about-intro__line">
+          <span class="word" style="--i:0">Hi there,</span>
+          <span class="word" style="--i:1">I'm Sachin.</span>
+          <span class="word" style="--i:2">An IT architect.</span>
+          <span class="word" style="--i:3">I plan and build</span>
+          <span class="word" style="--i:4">software.</span>
+          <!--<span class="word" style="--i:5">for AI</span>
+          <span class="word" style="--i:6">era.</span> -->
+        </h1>
+      </div>
+
+      <!-- BIRDS — a small flock glides across the sky at different heights
+           and speeds, wings gently flapping. Pure CSS/SVG, decorative,
+           monochrome; it loops and respects prefers-reduced-motion. -->
+      <div class="about-birds" aria-hidden="true">
+        <span class="bird bird--1">
+          <svg viewBox="0 0 40 20"><path class="bird__wings" d="M2 14 Q 12 2 20 12 Q 28 2 38 14" /></svg>
+        </span>
+        <span class="bird bird--2">
+          <svg viewBox="0 0 40 20"><path class="bird__wings" d="M2 14 Q 12 2 20 12 Q 28 2 38 14" /></svg>
+        </span>
+        <span class="bird bird--3">
+          <svg viewBox="0 0 40 20"><path class="bird__wings" d="M2 14 Q 12 2 20 12 Q 28 2 38 14" /></svg>
+        </span>
+        <span class="bird bird--4">
+          <svg viewBox="0 0 40 20"><path class="bird__wings" d="M2 14 Q 12 2 20 12 Q 28 2 38 14" /></svg>
+        </span>
+        <span class="bird bird--5">
+          <svg viewBox="0 0 40 20"><path class="bird__wings" d="M2 14 Q 12 2 20 12 Q 28 2 38 14" /></svg>
+        </span>
+      </div>
+
+      <!-- RIGHT: bricks fall in and assemble into a robot (AI). Built by
+           the legoRobot() module in script.js; styled by .lego-* rules. -->
+      <div class="lego-stage" aria-hidden="true">
+        <div class="lego-robot" id="lego-robot"></div>
+      </div>
+    </section>
+  </main>
+
+  <!-- ===== SERVICES VIEW — the scroll-snapping book of service spreads
+       (currently just AI). ===== -->
+  <main class="view" id="view-services" data-view="services" aria-label="Services" hidden>
+  <div class="book" id="book-services">
+
+    <!-- ===== SPREAD — Artificial Intelligence (neural brain) ===== -->
+    <section class="spread" id="spread-ai" data-spread="brain" aria-label="Artificial Intelligence">
+      <canvas class="spread__canvas spread__canvas--interactive"></canvas>
       <div class="spread__spine" aria-hidden="true"></div>
       <div class="page--right">
         <p class="aspect__eyebrow"></p>
@@ -95,9 +255,24 @@
       </div>
     </section>
 
-    <!-- ===== SPREAD 3 — Artificial Intelligence (dots world map) ===== -->
-    <section class="spread" id="spread-ai" data-spread="worldmap" aria-label="Artificial Intelligence">
-      <canvas class="spread__canvas spread__canvas--interactive"></canvas>
+    <!-- ===== SPREAD — PostgreSQL (pure-CSS elephant) ===== -->
+    <section class="spread" id="spread-postgres" data-spread="postgres" aria-label="PostgreSQL">
+      <div class="pg-stage" aria-hidden="true">
+        <div class="el">
+          <span class="el__shadow"></span>
+          <span class="el__leg el__leg--far el__leg--b"></span>
+          <span class="el__leg el__leg--far el__leg--f"></span>
+          <span class="el__tail"></span>
+          <span class="el__body"></span>
+          <span class="el__leg el__leg--b"></span>
+          <span class="el__leg el__leg--f"></span>
+          <span class="el__head"></span>
+          <span class="el__trunk"><span class="el__trunk2"></span></span>
+          <span class="el__tusk"></span>
+          <span class="el__ear"></span>
+          <span class="el__eye"></span>
+        </div>
+      </div>
       <div class="spread__spine" aria-hidden="true"></div>
       <div class="page--right">
         <p class="aspect__eyebrow"></p>
@@ -125,6 +300,6 @@
   <div class="grain" aria-hidden="true"></div>
 
   <!-- Site script -->
-  <script src="script.js"></script>
+  <script src="script.js?v=10"></script>
 </body>
 </html>

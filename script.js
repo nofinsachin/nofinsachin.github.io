@@ -20,9 +20,9 @@
 // Shared flowing background of letters & numbers (behind all spreads).
 const FLOW = {
   characters: "01",  // just 1s and 0s — binary rain
-  fontSize:   7,
+  fontSize:   11,
   density:    0.0038,
-  color:      "237, 237, 237",
+  color:      "200, 200, 200",
   baseOpacity: 0.008, // very faint — deep night
   maxOpacity:  0.03,  // darker peak
   flowX:      10,
@@ -32,14 +32,17 @@ const FLOW = {
 
 // Per-spread right-page text (keyed by the section id).
 const SPREADS = {
-  "spread-experience": { eyebrow: "Experience", line: "Sixteen years of IT experience." },
-  "spread-devops":     { eyebrow: "DevOps & Platform Engineering",
-                         line: "Building the tools and pipelines that ship software." },
+    "spread-portrait": {
+        eyebrow: "About me",
+        line: "Software engineer & researcher — I build thoughtful systems, explore ideas, and turn requirements into living software."
+    },
   "spread-ai":         { eyebrow: "Artificial Intelligence",
-                         line: "Bringing intelligence to systems, everywhere." }
+                         line: "From awareness to transformational, adopt AI as needed." },
+  "spread-postgres":   { eyebrow: "PostgreSQL",
+                           line: "From infrastructure to Database administration, everything related to PostgreSQL." }
 };
 
-// Projects tab content. Each entry is a CONDENSED summary — the full
+// Projects tab content. Each entry is Augment high impact workflows with AIary — the full
 // detail for each project lives in its own repository. Rendered as
 // cards into #projects-grid by the tabs() module below.
 //   status  — short lifecycle label (e.g. "In design", "Active")
@@ -142,106 +145,63 @@ const RESEARCH = [
   }
 ];
 
-// ---- Spread 1: Hourglass (left page) — polished ----
-const HOURGLASS = {
-  heightFrac:  0.34, widthRatio: 0.62, neckRatio: 0.05,
-  duration:    12,   centerFrac: 0.25,
-  bulge:       0.28,  // how rounded the glass bulbs are (0 = straight cone)
-  sandColor:   "rgba(237,237,237,0.6)",
-  sandEdge:    "rgba(237,237,237,0.85)",  // brighter sand surface line
-  streamColor: "rgba(237,237,237,0.85)",
-  glassColor:  "rgba(237,237,237,0.42)",  // glass outline (base)
-  glassHi:     "rgba(237,237,237,0.85)",  // glass highlight (light catching)
-  frameColor:  "rgba(237,237,237,0.78)",  // end caps + posts (the frame)
-  glow:        "rgba(237,237,237,0.25)",
-  aura:        "rgba(237,237,237,0.06)",  // faint radial glow behind it
-  lineWidth:   1.6,
-  grains:      7,     // number of falling sand particles in the stream
-  grainSize:   1.3    // particle radius (px)
+// ---- Services: Neural brain (left page) — monochrome 3D point cloud ----
+const BRAIN = {
+  centerFrac: 0.25,   // horizontal centre of the brain (left page)
+  offsetY:    -100,   // px shift of the whole spread upward (brain + text, see CSS)
+  widthFrac:  0.70,   // size as a fraction of viewport width...
+  heightFrac: 0.86,   // ...and height; the smaller one fits the model
+  color:      "234, 196, 210",   /* soft desaturated pink — a subtle tint on the brain */
+
+  count:      1300,   // total nodes across all lobes (denser = reads as a brain)
+  linkDist:   0.9,    // model-space distance under which nodes get a synapse
+  maxLinks:   4,      // max synapse lines per node (richer web)
+
+  // --- motion ---
+  spinSpeed:  0.22,   // radians/sec the brain rotates around its vertical axis
+  tiltX:      0.39,   // forward tilt (radians) ≈ the reference camera's 22° look-down
+  tiltStart:  0.6,    // static spin angle used under reduced motion
+  fov:        4.2,    // perspective strength (bigger = flatter)
+
+  // --- node appearance (depth drives size + brightness) ---
+  // Alphas are lower than for flat dots because additive blending
+  // accumulates brightness where nodes overlap (dense = brighter).
+  dotSize:    0.9,    // bright-core radius (px, far side)
+  sizeBoost:  1.5,    // extra core radius for the nearest nodes
+  glowScale:  3.2,    // halo radius = core * this (soft outer glow)
+  minAlpha:   0.10,   // dimmest (far) node
+  maxAlpha:   0.55,   // brightest (near) node core
+
+  // --- synapse lines ---
+  lineMinAlpha: 0.02, // faint far links
+  lineMaxAlpha: 0.10, // brighter near links
+
+  // --- hover highlight ---
+  hoverRadius: 100,   // px radius of the hover glow
+  hoverBoost:  0.8,   // extra brightness (0..1) at the cursor centre
+
+  glow:       "rgba(234,196,210,0.3)"
 };
-
-// ---- Spread 2: CSS 3D tool cube (left page) ----
-// The cube is implemented in pure CSS (preserve-3d) — see the .cube rules
-// in styles.css and the markup in index.html. Edit the six tool names in
-// the .cube__face elements in index.html. JS only handles hover-pause.
-
-// ---- Spread 3: Dots-only world map (left page) ----
-const WORLDMAP = {
-  centerFrac: 0.25,   // horizontal centre of the map (left page)
-  widthFrac:  0.42,   // map width as a fraction of viewport width
-  dotSize:    1.6,    // base dot radius (px)
-  gap:        7,      // spacing between dot cells (px); smaller = denser
-  color:      "237, 237, 237",
-
-  // --- brightness range ---
-  minAlpha:   0.06,   // darkest a dot gets (the "dark" side)
-  maxAlpha:   0.85,   // brightest a dot gets (lit regions)
-
-  // --- drifting light/dark PATCHES (value-noise field) ---
-  patchScale: 3.2,    // how many noise cells across the map (bigger = smaller patches)
-  patchDrift: 0.06,   // how fast the patches wander (units/sec)
-  contrast:   1.6,    // >1 pushes patches toward clearer light/dark separation
-
-  // --- wandering HOTSPOTS (bright flares that roam the map) ---
-  hotspots:   3,      // number of roaming bright spots
-  hotRadius:  0.16,   // hotspot influence radius (fraction of map width)
-  hotSpeed:   0.05,   // how fast hotspots roam
-
-  // --- slow global sweep (kept subtle, layered under the patches) ---
-  pulseAlpha: 0.25,   // extra brightness from the sweep band
-  pulseSpeed: 0.08,   // sweep speed (fraction/sec)
-
-  // bright dots swell slightly so lit regions "glow"
-  sizeBoost:  0.9,    // extra px radius at full brightness
-
-  // --- hover highlight (brightens dots near the cursor) ---
-  hoverRadius: 90,    // px radius of the hover glow
-  hoverBoost:  0.9,   // extra brightness (0..1) at the cursor centre
-
-  glow:       "rgba(237,237,237,0.3)"
-};
-
-/* A compact land mask: each string is a row (north -> south); '#' = land,
-   ' ' = sea. Columns map to longitude (-180 -> +180). It's deliberately
-   coarse & stylized — enough to read as Earth without any map data file.
-   Grid is 60 wide; the renderer samples it to place dots only on land. */
-const LAND_MASK = [
-  "            ####      #######                               ",
-  "       ########### ############### ####          ####       ",
-  "     ################################# ###      ##### ##    ",
-  "    ##################################     ###########      ",
-  "   ###############################         ###########      ",
-  "    ###########################             #########       ",
-  "     #####################    ##             #######        ",
-  "       ###############         #              #####         ",
-  "         ###########                           ###          ",
-  "          #########            ####           ###    #      ",
-  "           #######            ######         ###    ##      ",
-  "            #####            ########       ###    ###      ",
-  "             ####           ########       ##     ###       ",
-  "             ###           ########             #####       ",
-  "             ##            #######             ####         ",
-  "             ##            ######              ###          ",
-  "             #             #####               ##    ##     ",
-  "                           ####                     ####    ",
-  "                           ###                     #####    ",
-  "                            #                       ###     ",
-  "                                                            ",
-  "                                               #            ",
-  "                        ##          ###                     ",
-  "                       ####        #####                    "
-];
 
 /* ================================================================
    2) APPLY RIGHT-PAGE TEXT (from SPREADS)
    ================================================================ */
 (function applySpreadText() {
+  // Split a title into word <span>s so CSS can reveal them one at a time
+  // (mirrors the Home hero). Each span gets a --i for the stagger.
+  const esc = (s) => String(s).replace(/[&<>"']/g, c => (
+    { "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;", "'": "&#39;" }[c]
+  ));
+  const toWords = (text) => String(text).trim().split(/\s+/)
+    .map((w, i) => `<span class="word" style="--i:${i}">${esc(w)}</span>`)
+    .join(" ");
+
   document.querySelectorAll(".spread").forEach(sec => {
     const data = SPREADS[sec.id];
     if (!data) return;
     const eyebrow = sec.querySelector(".aspect__eyebrow");
     const line = sec.querySelector(".aspect__line");
-    if (eyebrow) eyebrow.textContent = data.eyebrow;
+    if (eyebrow) eyebrow.innerHTML = data.eyebrow ? toWords(data.eyebrow) : "";
     if (line) line.textContent = data.line;
   });
 })();
@@ -347,15 +307,12 @@ const LAND_MASK = [
           ? `<a class="project-card__link" href="${esc(l.href)}" target="_blank" rel="noopener">${label}</a>`
           : `<a class="project-card__link" href="#" aria-disabled="true" title="Coming soon">${label}</a>`;
       }).join("");
-      const num = String(i + 1).padStart(2, "0");
       return `
         <section class="spread" aria-label="${esc(p.name)}">
           ${projectArt(p)}
           <div class="spread__spine" aria-hidden="true"></div>
           <div class="page--right">
-            <p class="aspect__eyebrow">
-              <span class="project__num">${num}</span>${esc(p.name)}
-            </p>
+            <p class="aspect__eyebrow">${esc(p.name)}</p>
             ${p.status ? `<p class="project__status">${esc(p.status)}</p>` : ""}
             ${p.tagline ? `<p class="aspect__line">${esc(p.tagline)}</p>` : ""}
             ${p.summary ? `<p class="project__summary">${esc(p.summary)}</p>` : ""}
@@ -398,15 +355,12 @@ const LAND_MASK = [
           ? `<a class="project-card__link" href="${esc(l.href)}" target="_blank" rel="noopener">${label}</a>`
           : `<a class="project-card__link" href="#" aria-disabled="true" title="Coming soon">${label}</a>`;
       }).join("");
-      const num = String(i + 1).padStart(2, "0");
       return `
         <section class="spread" aria-label="${esc(r.title)}">
           ${error3dArt(r.art || ["404"])}
           <div class="spread__spine" aria-hidden="true"></div>
           <div class="page--right">
-            <p class="aspect__eyebrow">
-              <span class="project__num">${num}</span>${esc(r.title)}
-            </p>
+            <p class="aspect__eyebrow">${esc(r.title)}</p>
             ${r.status ? `<p class="project__status">${esc(r.status)}</p>` : ""}
             ${r.abstract ? `<p class="research-item__abstract">${esc(r.abstract)}</p>` : ""}
             ${r.angle ? `<p class="research-item__angle">${esc(r.angle)}</p>` : ""}
@@ -436,6 +390,18 @@ const LAND_MASK = [
 
     if (name === "projects") renderProjects();
     if (name === "research") renderResearch();
+    if (name === "home") replayHeroReveal();
+  }
+
+  // Restart the Home hero's word-by-word reveal each time Home is shown.
+  // Toggling .reveal-reset (which kills the animation) and forcing a
+  // reflow before removing it re-triggers the CSS keyframes from zero.
+  function replayHeroReveal() {
+    const hero = document.querySelector(".home-hero");
+    if (!hero) return;
+    hero.classList.add("reveal-reset");
+    void hero.offsetWidth;            // force reflow so the restart "takes"
+    hero.classList.remove("reveal-reset");
   }
 
   tabEls.forEach(el => el.addEventListener("click", (e) => {
@@ -454,36 +420,71 @@ const LAND_MASK = [
 })();
 
 /* ================================================================
+   2c) ABOUT — LEGO ROBOT. A platform plate drops in first (the
+       "platform"), then bricks fall onto it one row at a time and
+       assemble into a robot (AI). It holds, fades, and replays.
+       Rendered flat (straight-on); CSS (.lego-*) does the look and
+       the fall. Legend:
+         h head   # torso   l limbs   E eyes   a antenna   C chest light
+   ================================================================ */
+(function legoRobot() {
+  const root = document.getElementById("lego-robot");
+  if (!root) return;
+
+  // 15 columns wide (same as the platform). Two grey antennae angle out
+  // at 45 deg; each starts ON TOP of the outermost head brick.
+  const MAP = [
+    "..a.........a..",
+    "...a.......a...",
+    "....a.....a....",
+    "....hhhhhhh....",
+    "....hEhhhEh....",
+    "....hhhhhhh....",
+    "......lll......",
+    "...ll#####ll...",
+    "..ll.#####.ll..",
+    "..ll.#####.ll..",
+    "..ll.##C##.ll..",
+    ".....#####.....",
+    ".....ll.ll.....",
+    ".....ll.ll.....",
+    "....lll.lll....",
+  ];
+  const COLS = MAP[0].length, PAD = 0;
+  if (MAP.some(r => r.length !== COLS)) console.warn("legoRobot: uneven MAP rows");
+  const rows = MAP.length;
+  const at = (x, y) => (MAP[y] && MAP[y][x]) || ".";
+  const stage = root.parentElement;          // the stage sizes itself from these
+  stage.style.setProperty("--cols", COLS);
+  stage.style.setProperty("--rows", rows);
+
+  const PLATE_DELAY = 0.2, ROBOT_START = 1.5;
+  let html = `<span class="lego-plate" style="--d:${PLATE_DELAY}s"></span>`;
+  MAP.forEach((row, y) => [...row].forEach((c, x) => {
+    if (c === ".") return;
+    const delay = (ROBOT_START + (rows - 1 - y) * 0.2 + Math.abs(x - 7) * 0.03).toFixed(2);
+    const stud = (c !== "a" && at(x, y - 1) === ".") ? " lego--stud" : "";
+    html += `<span class="lego lego--${c}${stud}" style="--x:${x + PAD};--y:${y};--d:${delay}s"></span>`;
+  }));
+  root.innerHTML = html;
+
+  // Replay forever: when one cycle's animation ends, restart the lot.
+  root.addEventListener("animationend", (e) => {
+    if (e.target !== root) return;
+    root.classList.remove("is-run");
+    void root.offsetWidth;
+    root.classList.add("is-run");
+  });
+  root.classList.add("is-run");
+})();
+
+/* ================================================================
    3) SHARED HELPERS
    ================================================================ */
 const reduceMotion = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
 const rand = (min, max) => Math.random() * (max - min) + min;
 const wrap = (v, max) => ((v % max) + max) % max;
 const easeOutCubic = (t) => 1 - Math.pow(1 - t, 3);
-
-/* Lightweight 2D value noise — smooth, deterministic, dependency-free.
-   Returns a value in [0,1] that varies coherently across space (nearby
-   inputs give similar outputs), so it's ideal for "patches of light".
-   Used by the world map to brighten/dim coherent regions over time. */
-function hash2(ix, iy) {
-  // Cheap integer hash -> [0,1)
-  let h = ix * 374761393 + iy * 668265263;
-  h = (h ^ (h >> 13)) * 1274126177;
-  h = h ^ (h >> 16);
-  return ((h >>> 0) % 100000) / 100000;
-}
-function valueNoise2D(x, y) {
-  const x0 = Math.floor(x), y0 = Math.floor(y);
-  const fx = x - x0, fy = y - y0;
-  // smoothstep fade
-  const sx = fx * fx * (3 - 2 * fx);
-  const sy = fy * fy * (3 - 2 * fy);
-  const n00 = hash2(x0, y0),     n10 = hash2(x0 + 1, y0);
-  const n01 = hash2(x0, y0 + 1), n11 = hash2(x0 + 1, y0 + 1);
-  const nx0 = n00 + (n10 - n00) * sx;
-  const nx1 = n01 + (n11 - n01) * sx;
-  return nx0 + (nx1 - nx0) * sy;   // [0,1]
-}
 
 // Compute the horizontal art centre for a spread. On narrow (stacked)
 // screens, centre horizontally and lift into the upper page.
@@ -507,11 +508,18 @@ function artCenter(width, height, centerFrac) {
   let dpr = Math.min(window.devicePixelRatio || 1, 2);
   let width = 0, height = 0, glyphs = [], rafId = null, lastT = 0, fontFamily = "monospace";
 
+  // --- live, interactively-tunable state (driven by the Home stage) ---
+  let chars = cfg.characters;        // current glyph set (eras swap this)
+  let speedMul = 1, speedTarget = 1; // overall flow speed multiplier
+  let boost = 0, boostTarget = 0;    // extra brightness 0..1 (eras/stoke)
+  let driftX = 0, driftTarget = 0;   // extra horizontal drift px/s (parallax)
+  const pickChar = () => chars[Math.floor(Math.random() * chars.length)];
+
   function build() {
     const count = Math.max(60, Math.floor(width * height * cfg.density));
     glyphs = new Array(count).fill(0).map(() => ({
       x: rand(0, width), y: rand(0, height),
-      char: cfg.characters[Math.floor(rand(0, cfg.characters.length))],
+      char: pickChar(),
       phase: rand(0, 6.283), jSpeed: rand(0.4, 1.2)
     }));
   }
@@ -527,17 +535,21 @@ function artCenter(width, height, centerFrac) {
   function draw(t) {
     const dt = lastT ? Math.min(0.05, (t - lastT) / 1000) : 0; lastT = t;
     const tSec = t / 1000;
+    // ease the interactive params toward their targets
+    speedMul += (speedTarget - speedMul) * Math.min(1, dt * 3);
+    boost    += (boostTarget - boost)    * Math.min(1, dt * 2.5);
+    driftX   += (driftTarget - driftX)   * Math.min(1, dt * 3);
     ctx.clearRect(0, 0, width, height);
     ctx.font = `${cfg.fontSize}px ${fontFamily}`;
     for (let i = 0; i < glyphs.length; i++) {
       const g = glyphs[i];
-      g.x = wrap(g.x + cfg.flowX * motionScale * dt, width);
-      g.y = wrap(g.y + cfg.flowY * motionScale * dt, height);
+      g.x = wrap(g.x + (cfg.flowX * speedMul + driftX) * motionScale * dt, width);
+      g.y = wrap(g.y + cfg.flowY * speedMul * motionScale * dt, height);
       const wob = reduceMotion ? 0 : Math.sin(tSec * g.jSpeed + g.phase) * cfg.jitter;
       const alpha = cfg.baseOpacity +
-        (0.5 + 0.5 * Math.sin(tSec * 0.5 + g.phase)) * (cfg.maxOpacity - cfg.baseOpacity);
-      if (!reduceMotion && Math.random() < 0.0008)
-        g.char = cfg.characters[Math.floor(Math.random() * cfg.characters.length)];
+        (0.5 + 0.5 * Math.sin(tSec * 0.5 + g.phase)) * (cfg.maxOpacity - cfg.baseOpacity)
+        + boost * 0.05;
+      if (!reduceMotion && Math.random() < 0.0008) g.char = pickChar();
       ctx.fillStyle = `rgba(${cfg.color}, ${alpha})`;
       ctx.fillText(g.char, g.x + wob, g.y);
     }
@@ -550,6 +562,106 @@ function artCenter(width, height, centerFrac) {
     if (document.hidden) { cancelAnimationFrame(rafId); lastT = 0; }
     else rafId = requestAnimationFrame(loop);
   });
+
+  // Public hooks so the interactive Home stage can drive the atmosphere:
+  // swap the glyph set per era, scale flow speed, add brightness/drift.
+  window.__flow = {
+    setChars(s) { if (s && s !== chars) { chars = s; /* reseed gradually via the random swap in draw() */ } },
+    setSpeed(m) { speedTarget = m; },
+    setBoost(b) { boostTarget = b; },
+    setDrift(d) { driftTarget = d; },
+    reset() { chars = cfg.characters; speedTarget = 1; boostTarget = 0; driftTarget = 0; }
+  };
+})();
+
+/* ================================================================
+   4b) MILESTONE POPUPS (Home) — train-driven, no user interaction.
+       The train runs left→right on its own. As it ARRIVES at a milestone,
+       that milestone's TUI popup unfolds (CSS reacts to .is-lit) and the
+       background atmosphere morphs into that era's glyph set. The popup
+       closes as the train moves on. Nothing responds to hover/click.
+   ================================================================ */
+(function homeMilestones() {
+  const scene = document.querySelector(".train-scene");
+  const loco  = scene && scene.querySelector(".loco");
+  const train = scene && scene.querySelector(".train");
+  const eras  = scene ? Array.from(scene.querySelectorAll(".era")) : [];
+  if (!scene || !eras.length) return;
+
+  // ---- Seamless hand-off: when the train finishes a run (reaches the
+  //      right edge and the trainRoll animation loops), slide the site
+  //      over to the About tab. Only acts while Home is the active view
+  //      and the page is visible, so it won't fire in the background.
+  //      The tabs() router listens on hashchange, so setting the hash is
+  //      enough to switch views. ----
+  if (train) {
+    train.addEventListener("animationiteration", (e) => {
+      if (e.animationName !== "trainRoll") return;
+      const home = document.getElementById("view-home");
+      if (!home || !home.classList.contains("is-active")) return;
+      if (document.hidden) return;
+      if (location.hash.replace(/^#/, "") !== "about") location.hash = "about";
+    });
+  }
+
+  const flow = () => window.__flow;
+  const eraFlow = eras.map(e => e.dataset.flow || "01");
+
+  // ---- the passing train lights the era it is nearest (the only driver) ----
+  let litIndex = -1, raf = null, running = false;
+  let inRangeSince = 0;              // last time the engine was AT a milestone
+  const LINGER = 1500;              // keep the banner this long after it passes (ms)
+  function eraCenterX(e) {
+    const r = e.getBoundingClientRect();
+    return r.left + r.width / 2;
+  }
+  function setLit(index) {
+    if (index === litIndex) return;
+    eras.forEach((e, i) => e.classList.toggle("is-lit", i === index));
+    litIndex = index;
+    const f = flow();
+    if (f && index >= 0) { f.setChars(eraFlow[index]); f.setBoost(0.4); }
+    else if (f) { f.setBoost(0); }
+  }
+  function frame() {
+    if (loco) {
+      const engineX = loco.getBoundingClientRect().left
+                    + loco.getBoundingClientRect().width * 0.75;   // loco front
+      let nearest = -1, best = 70;                 // px threshold to "arrive"
+      eras.forEach((e, i) => {
+        const d = Math.abs(engineX - eraCenterX(e));
+        if (d < best) { best = d; nearest = i; }
+      });
+      const now = performance.now();
+      if (nearest >= 0) {
+        // engine is at a milestone — light it and remember when.
+        inRangeSince = now;
+        setLit(nearest);
+      } else if (litIndex >= 0 && (now - inRangeSince) > LINGER) {
+        // engine has moved on AND the linger window elapsed — close the banner.
+        setLit(-1);
+      }
+      /* else: keep the last banner open during the linger window */
+    }
+    raf = requestAnimationFrame(frame);
+  }
+
+  function start() { if (!running) { running = true; raf = requestAnimationFrame(frame); } }
+  function stop()  {
+    if (!running) return; running = false; cancelAnimationFrame(raf);
+    eras.forEach(e => e.classList.remove("is-lit"));
+    litIndex = -1; inRangeSince = 0;
+    const f = flow(); if (f) f.reset();
+  }
+  function sync() {
+    const home = document.getElementById("view-home");
+    if (home && home.classList.contains("is-active")) start(); else stop();
+  }
+  const homeEl = document.getElementById("view-home");
+  if (homeEl) new MutationObserver(sync).observe(homeEl, { attributes: true, attributeFilter: ["class"] });
+  window.addEventListener("hashchange", () => setTimeout(sync, 0));
+  document.addEventListener("visibilitychange", () => { if (document.hidden) stop(); else sync(); });
+  sync();
 })();
 
 /* ================================================================
@@ -574,9 +686,25 @@ const SpreadArt = {
       const canvas = sec.querySelector(".spread__canvas");
       const entry = SpreadArt.registry.find(r => r.canvas === canvas);
       if (entry) entry.active = e.isIntersecting && e.intersectionRatio > 0.4;
+      // Drive the dramatic title reveal: add .is-visible when the spread
+      // is mostly on screen, remove it when it leaves so the word-by-word
+      // animation replays each time the spread is scrolled back into view.
+      const shown = e.isIntersecting && e.intersectionRatio > 0.4;
+      sec.classList.toggle("is-visible", shown);
     });
   }, { threshold: [0, 0.4, 0.75, 1] });
   document.querySelectorAll(".spread").forEach(s => io.observe(s));
+
+  // Projects / Research spreads are rendered the first time their tab is
+  // opened (after this ran), so watch for newly added spreads too —
+  // otherwise they never get .is-visible and their text stays hidden.
+  new MutationObserver((muts) => {
+    muts.forEach(m => m.addedNodes.forEach(n => {
+      if (n.nodeType !== 1) return;
+      if (n.classList.contains("spread")) io.observe(n);
+      n.querySelectorAll && n.querySelectorAll(".spread").forEach(s => io.observe(s));
+    }));
+  }).observe(document.body, { childList: true, subtree: true });
 })();
 
 /* Generic per-canvas runner: sizes the canvas and drives the drawer's
@@ -613,129 +741,6 @@ function runCanvas(canvas, makeDrawer) {
 }
 
 /* ================================================================
-   6) SPREAD 1 — HOURGLASS (continuous; never stops)
-   ================================================================ */
-(function initHourglass() {
-  const canvas = document.querySelector('#spread-experience .spread__canvas');
-  if (!canvas) return;
-  const cfg = HOURGLASS;
-
-  runCanvas(canvas, (ctx, dims) => {
-    let cx = 0, topY = 0, midY = 0, botY = 0, halfW = 0, neckW = 0, chamberH = 0;
-    let progress = reduceMotion ? 0.5 : 0;
-    let grains = [];   // falling sand particles {t} where t in [0,1] down the stream
-
-    function onResize(width, height) {
-      const totalH = height * cfg.heightFrac;
-      chamberH = totalH / 2;
-      halfW = (chamberH * cfg.widthRatio) / 2;
-      neckW = halfW * cfg.neckRatio * 2;
-      const c = artCenter(width, height, cfg.centerFrac);
-      cx = c.cx; topY = c.cy - totalH / 2; midY = topY + chamberH; botY = topY + totalH;
-      // seed grains spread along the stream
-      grains = new Array(cfg.grains).fill(0).map((_, i) => ({ t: i / cfg.grains }));
-    }
-
-    // Straight taper half-width (used to clip sand fills to the glass).
-    function halfWidthAt(y) {
-      if (y <= midY) { const f = (y - topY) / chamberH; return halfW + (neckW/2 - halfW) * f; }
-      const f = (y - midY) / chamberH; return neckW/2 + (halfW - neckW/2) * f;
-    }
-
-    function step(dt) {
-      if (reduceMotion) return;
-      progress += dt / cfg.duration;
-      if (progress >= 1) progress -= 1;
-      // advance falling grains (fast, wrapping) only while sand is flowing
-      for (const g of grains) { g.t += dt * 1.8; if (g.t > 1) g.t -= 1; }
-    }
-
-    // One curved glass side from (topX,topY) bowing out to the neck.
-    // `sign` = -1 left, +1 right. Uses a quadratic bulge for a blown-glass look.
-    function glassSide(sign) {
-      const bx = sign * halfW;
-      const nx = sign * (neckW / 2);
-      const bulgeX = sign * halfW * (1 + cfg.bulge);
-      ctx.beginPath();
-      ctx.moveTo(cx + bx, topY);
-      ctx.quadraticCurveTo(cx + bulgeX, topY + chamberH * 0.55, cx + nx, midY);
-      ctx.quadraticCurveTo(cx + bulgeX, botY - chamberH * 0.55, cx + bx, botY);
-    }
-
-    function draw() {
-      const { width, height } = dims();
-      ctx.clearRect(0, 0, width, height);
-
-      // --- ambient aura behind the piece ---
-      const auraR = chamberH * 2.4;
-      const ag = ctx.createRadialGradient(cx, (topY+botY)/2, 0, cx, (topY+botY)/2, auraR);
-      ag.addColorStop(0, cfg.aura);
-      ag.addColorStop(1, "rgba(0,0,0,0)");
-      ctx.fillStyle = ag;
-      ctx.fillRect(cx - auraR, (topY+botY)/2 - auraR, auraR*2, auraR*2);
-
-      // --- sand (top chamber draining, bottom pile growing) ---
-      ctx.save();
-      ctx.shadowColor = cfg.glow; ctx.shadowBlur = 16;
-      ctx.fillStyle = cfg.sandColor;
-      const levelY = topY + (midY - topY) * progress;
-      ctx.beginPath();
-      ctx.moveTo(cx - halfWidthAt(levelY), levelY);
-      ctx.lineTo(cx + halfWidthAt(levelY), levelY);
-      ctx.lineTo(cx + halfWidthAt(midY), midY);
-      ctx.lineTo(cx - halfWidthAt(midY), midY);
-      ctx.closePath(); ctx.fill();
-      const pileTopY = botY - (botY - midY) * progress;
-      ctx.beginPath();
-      ctx.moveTo(cx - halfWidthAt(botY), botY);
-      ctx.lineTo(cx + halfWidthAt(botY), botY);
-      ctx.lineTo(cx + halfWidthAt(pileTopY), pileTopY);
-      ctx.lineTo(cx, pileTopY + (midY - pileTopY) * 0.14);   // pile peak
-      ctx.lineTo(cx - halfWidthAt(pileTopY), pileTopY);
-      ctx.closePath(); ctx.fill();
-      ctx.restore();
-
-      // brighter sand surface lines (top level + pile ridge)
-      ctx.strokeStyle = cfg.sandEdge; ctx.lineWidth = 1;
-      ctx.beginPath(); ctx.moveTo(cx - halfWidthAt(levelY), levelY); ctx.lineTo(cx + halfWidthAt(levelY), levelY); ctx.stroke();
-
-      // --- falling sand grains (lively stream) ---
-      if (progress > 0.001 && progress < 0.999) {
-        ctx.fillStyle = cfg.streamColor;
-        ctx.save(); ctx.shadowColor = cfg.glow; ctx.shadowBlur = 6;
-        for (const g of grains) {
-          const gy = midY + (pileTopY - midY) * g.t;
-          const gx = cx + Math.sin(g.t * 18) * 0.6;   // tiny jitter
-          ctx.beginPath(); ctx.arc(gx, gy, cfg.grainSize, 0, Math.PI*2); ctx.fill();
-        }
-        ctx.restore();
-      }
-
-      // --- glass bulbs: base outline + a highlight pass on the right ---
-      ctx.lineJoin = "round"; ctx.lineCap = "round";
-      ctx.strokeStyle = cfg.glassColor; ctx.lineWidth = cfg.lineWidth;
-      glassSide(-1); ctx.stroke();
-      glassSide( 1); ctx.stroke();
-      // highlight: a brighter, thinner stroke on the right side (light catching)
-      ctx.strokeStyle = cfg.glassHi; ctx.lineWidth = cfg.lineWidth * 0.6;
-      glassSide( 1); ctx.stroke();
-
-      // --- frame: end caps + two side posts connecting them ---
-      ctx.strokeStyle = cfg.frameColor; ctx.lineWidth = cfg.lineWidth * 1.6;
-      const capOver = 8, postX = halfW + capOver;
-      // top & bottom caps
-      ctx.beginPath(); ctx.moveTo(cx - postX, topY); ctx.lineTo(cx + postX, topY); ctx.stroke();
-      ctx.beginPath(); ctx.moveTo(cx - postX, botY); ctx.lineTo(cx + postX, botY); ctx.stroke();
-      // corner posts
-      ctx.lineWidth = cfg.lineWidth * 1.2;
-      ctx.beginPath(); ctx.moveTo(cx - postX, topY); ctx.lineTo(cx - postX, botY); ctx.stroke();
-      ctx.beginPath(); ctx.moveTo(cx + postX, topY); ctx.lineTo(cx + postX, botY); ctx.stroke();
-    }
-    return { onResize, step, draw, alwaysRun: true };
-  });
-})();
-
-/* ================================================================
    7) SPREAD 2 — TUMBLING CUBES (pure CSS, no JS)
       The scene (rotating stage + three tumbling cubes) is entirely CSS —
       see the .tumble-stage rules in styles.css and the markup in
@@ -744,62 +749,123 @@ function runCanvas(canvas, makeDrawer) {
    ================================================================ */
 
 /* ================================================================
-   8) SPREAD 3 — DOTS-ONLY WORLD MAP
-      Dots are placed only where the LAND_MASK marks land. Their
-      brightness is a blend of:
-        • a drifting value-NOISE field  -> coherent patches of light/dark
-          that slowly wander (the main "illusion of light and dark"),
-        • a few roaming HOTSPOTS        -> brighter flares that travel,
-        • a subtle left->right SWEEP    -> faint global "activity".
-      Brighter dots also swell a little so lit regions seem to glow.
-      Reduced motion: a static noise field, no drift/hotspots/sweep.
+   8) SPREAD 3 — NEURAL BRAIN (pure canvas 3D, dependency-free)
+      A monochrome point-cloud "brain": ~550 nodes generated inside
+      brain-shaped ellipsoids (two hemispheres + cerebellum + stem),
+      rotated slowly in 3D and projected to 2D with simple perspective.
+      Nearby nodes are joined by faint "synapse" lines (precomputed once).
+      Depth controls each node's size + brightness so it reads as volume;
+      a cursor hover brightens nearby nodes. Reduced motion: no spin.
    ================================================================ */
-(function initWorldMap() {
+(function initBrain() {
   const canvas = document.querySelector('#spread-ai .spread__canvas');
   if (!canvas) return;
-  const cfg = WORLDMAP;
-  const rows = LAND_MASK.length;
-  const cols = LAND_MASK[0].length;
-
-  function isLand(col, row) {
-    const line = LAND_MASK[row] || "";
-    return line.charAt(col) === "#";
-  }
+  const cfg = BRAIN;
 
   runCanvas(canvas, (ctx, dims) => {
-    let dots = [];       // { x, y, u, v }  u,v = normalized map coords [0,1]
-    let originX = 0, originY = 0, mapW = 0, mapH = 0;
+    let nodes = [];      // { x,y,z } in model space (centered on origin)
+    let edges = [];      // [i, j] index pairs for synapse lines
+    let cx = 0, cy = 0, scale = 1;
+    let tSec = 0;
+    let px = -1, py = -1;        // pointer (client coords; -1 = none)
 
-    function onResize(width, height) {
-      const c = artCenter(width, height, cfg.centerFrac);
-      mapW = width * cfg.widthFrac;
-      mapH = mapW * (rows / cols);
-      originX = c.cx - mapW / 2;
-      originY = c.cy - mapH / 2;
+    // Pre-render ONE soft radial-glow dot to an offscreen canvas (the
+    // monochrome equivalent of the reference's createCircleTexture glow
+    // sprite). We then drawImage it per node — far cheaper than building
+    // a radial gradient every frame, and with "lighter" compositing it
+    // accumulates like additive blending so dense regions bloom.
+    const SPRITE = 64;                         // sprite is 64x64 px
+    const glowSprite = document.createElement("canvas");
+    glowSprite.width = glowSprite.height = SPRITE;
+    {
+      const g = glowSprite.getContext("2d");
+      const grad = g.createRadialGradient(SPRITE/2, SPRITE/2, 0, SPRITE/2, SPRITE/2, SPRITE/2);
+      // Driven by cfg.color so the nodes carry the brain's tint (pink).
+      grad.addColorStop(0,    `rgba(${cfg.color}, 1)`);
+      grad.addColorStop(0.25, `rgba(${cfg.color}, 0.65)`);
+      grad.addColorStop(0.55, `rgba(${cfg.color}, 0.18)`);
+      grad.addColorStop(1,    `rgba(${cfg.color}, 0)`);
+      g.fillStyle = grad;
+      g.fillRect(0, 0, SPRITE, SPRITE);
+    }
 
-      dots = [];
-      for (let y = 0; y <= mapH; y += cfg.gap) {
-        for (let x = 0; x <= mapW; x += cfg.gap) {
-          const col = Math.floor((x / mapW) * cols);
-          const row = Math.floor((y / mapH) * rows);
-          if (isLand(col, row)) {
-            dots.push({ x: originX + x, y: originY + y, u: x / mapW, v: y / mapH });
-          }
+    // Random point inside a unit sphere, then scaled to an ellipsoid and
+    // offset to a lobe centre. Gives a soft, organic brain volume.
+    function addLobe(count, c, rad) {
+      for (let i = 0; i < count; i++) {
+        const u = Math.random(), v = Math.random();
+        const theta = 2 * Math.PI * u;
+        const phi = Math.acos(2 * v - 1);
+        const rr = Math.cbrt(Math.random());
+        nodes.push({
+          x: rr * Math.sin(phi) * Math.cos(theta) * rad.x + c.x,
+          y: rr * Math.sin(phi) * Math.sin(theta) * rad.y + c.y,
+          z: rr * Math.cos(phi)                   * rad.z + c.z
+        });
+      }
+    }
+
+    function buildModel() {
+      nodes = []; edges = [];
+      // Model units: cerebrum ~[-2,+2]; the stem reaches down to y ≈ -5.2.
+      addLobe(Math.round(cfg.count * 0.33), { x: -0.6, y: 0,    z: 0    }, { x: 1.4, y: 1.8, z: 2.2 }); // left hemisphere
+      addLobe(Math.round(cfg.count * 0.33), { x:  0.6, y: 0,    z: 0    }, { x: 1.4, y: 1.8, z: 2.2 }); // right hemisphere
+      addLobe(Math.round(cfg.count * 0.16), { x:  0,   y: -1.6, z: -1.2 }, { x: 1.7, y: 1.1, z: 1.1 }); // cerebellum
+      // Brain stem — now an EXTENDED, tapering column so the silhouette
+      // reads as a human brain: pons/midbrain (upper, wider) flowing into
+      // a long, narrow medulla that descends well below the cerebellum.
+      addLobe(Math.round(cfg.count * 0.10), { x: 0, y: -2.6, z: -0.2 }, { x: 0.55, y: 1.0, z: 0.6 }); // pons / midbrain
+      addLobe(Math.round(cfg.count * 0.08), { x: 0, y: -4.2, z: -0.1 }, { x: 0.34, y: 1.4, z: 0.38 }); // medulla / descending stem
+
+      // Precompute synapse edges: join each node to a few close neighbours.
+      const d2 = cfg.linkDist * cfg.linkDist;
+      for (let i = 0; i < nodes.length; i++) {
+        let made = 0;
+        for (let j = i + 1; j < nodes.length && made < cfg.maxLinks; j++) {
+          const dx = nodes[i].x - nodes[j].x;
+          const dy = nodes[i].y - nodes[j].y;
+          const dz = nodes[i].z - nodes[j].z;
+          if (dx*dx + dy*dy + dz*dz < d2) { edges.push([i, j]); made++; }
         }
       }
     }
 
-    let tSec = 0;
-    let px = -1, py = -1;   // pointer (client coords; -1 = none)
+    function onResize(width, height) {
+      const c = artCenter(width, height, cfg.centerFrac);
+      cx = c.cx; cy = c.cy + (cfg.offsetY || 0);
+      // Fit the model to a fraction of the viewport. The vertical extent
+      // now binds: the extended stem reaches y ≈ -5.2, so divide by ~5.2
+      // (its half-extent) to keep the whole brain — stem included — in
+      // the fit box. Larger widthFrac/heightFrac make it a bit bigger.
+      scale = Math.min(width * cfg.widthFrac, height * cfg.heightFrac) / 5.2 / 2;
+      buildModel();
+    }
+
     function step(dt) { if (!reduceMotion) tSec += dt; }
 
-    // Current positions of the roaming hotspots (in normalized u,v space).
-    function hotspotAt(i, t) {
-      // Each hotspot traces a slow Lissajous path so they never sync up.
-      const a = i * 2.3994;  // golden-ish offset per hotspot
+    // Rotate a model point around Y (spin) then X (fixed tilt), and project
+    // to screen with a gentle perspective. Returns {sx, sy, depth} where
+    // depth in [0,1] (0 = far, 1 = near) drives size + brightness.
+    function project(n) {
+      const ay = reduceMotion ? cfg.tiltStart : tSec * cfg.spinSpeed;
+      const cosY = Math.cos(ay), sinY = Math.sin(ay);
+      // spin around Y
+      let x = n.x * cosY + n.z * sinY;
+      let z = -n.x * sinY + n.z * cosY;
+      // Flip the model's vertical axis: the lobes are built with the
+      // cerebellum/stem at negative y, and canvas +y points DOWN, which
+      // rendered the brain upside down. Negating y here turns it upright.
+      let y = -n.y;
+      // fixed tilt around X so we look slightly down on it
+      const cosX = Math.cos(cfg.tiltX), sinX = Math.sin(cfg.tiltX);
+      const y2 = y * cosX - z * sinX;
+      const z2 = y * sinX + z * cosX;
+      // perspective: far points (more negative z) shrink toward centre
+      const persp = cfg.fov / (cfg.fov + z2);
       return {
-        u: 0.5 + 0.42 * Math.sin(t * cfg.hotSpeed * (1 + i * 0.3) + a),
-        v: 0.5 + 0.38 * Math.cos(t * cfg.hotSpeed * (0.8 + i * 0.25) + a * 1.7)
+        sx: cx + x * scale * persp,
+        sy: cy + y2 * scale * persp,
+        depth: Math.max(0, Math.min(1, (z2 + 2.6) / 5.2)) // normalize [-2.6..2.6]
       };
     }
 
@@ -807,57 +873,53 @@ function runCanvas(canvas, makeDrawer) {
       const { width, height } = dims();
       ctx.clearRect(0, 0, width, height);
 
-      // Drift offset for the noise field (frozen under reduced motion).
-      const drift = reduceMotion ? 0 : tSec * cfg.patchDrift;
-      // Sweep band centre [−0.2 .. 1.2].
-      const sweep = reduceMotion ? -2 : wrap(tSec * cfg.pulseSpeed, 1.4) - 0.2;
+      // Project every node once this frame.
+      const P = new Array(nodes.length);
+      for (let i = 0; i < nodes.length; i++) P[i] = project(nodes[i]);
 
-      // Precompute hotspot positions this frame.
-      const hs = [];
-      if (!reduceMotion) for (let i = 0; i < cfg.hotspots; i++) hs.push(hotspotAt(i, tSec));
+      // Additive blending (like the reference's AdditiveBlending): where
+      // many nodes/lines overlap the light accumulates, so dense regions
+      // bloom and the cloud reads as a solid, glowing brain volume. Draw
+      // order no longer matters, so no depth sort is needed.
+      ctx.globalCompositeOperation = "lighter";
 
-      ctx.shadowColor = cfg.glow; ctx.shadowBlur = 6;
+      // --- synapse lines (faint web, behind the glowing nodes) ---
+      ctx.lineWidth = 1;
+      for (let e = 0; e < edges.length; e++) {
+        const a = P[edges[e][0]], b = P[edges[e][1]];
+        const depth = (a.depth + b.depth) / 2;
+        const alpha = cfg.lineMinAlpha + depth * (cfg.lineMaxAlpha - cfg.lineMinAlpha);
+        ctx.strokeStyle = `rgba(${cfg.color}, ${alpha})`;
+        ctx.beginPath();
+        ctx.moveTo(a.sx, a.sy);
+        ctx.lineTo(b.sx, b.sy);
+        ctx.stroke();
+      }
 
-      for (let i = 0; i < dots.length; i++) {
-        const d = dots[i];
+      // --- nodes: soft radial-glow sprites (nearer = bigger & brighter) ---
+      for (let i = 0; i < nodes.length; i++) {
+        const p = P[i];
+        let level = p.depth;
 
-        // 1) Base brightness from the drifting noise field (coherent patches).
-        let n = valueNoise2D(d.u * cfg.patchScale + drift, d.v * cfg.patchScale - drift);
-        // push toward clearer light/dark with contrast around the midpoint
-        n = Math.max(0, Math.min(1, 0.5 + (n - 0.5) * cfg.contrast));
-
-        // 2) Hotspot flares add brightness near roaming points.
-        let hot = 0;
-        for (let k = 0; k < hs.length; k++) {
-          const du = d.u - hs[k].u, dv = d.v - hs[k].v;
-          const dist = Math.sqrt(du * du + dv * dv);
-          hot = Math.max(hot, Math.max(0, 1 - dist / cfg.hotRadius));
-        }
-
-        // 3) Subtle global sweep.
-        let sw = 0;
-        if (!reduceMotion) sw = Math.max(0, 1 - Math.abs(d.u - sweep) * 7);
-
-        // 4) Hover glow — brighten dots near the cursor (pixel distance).
-        let hover = 0;
+        // hover: brighten nodes near the cursor (pixel distance)
         if (px >= 0) {
-          const hd = Math.hypot(d.x - px, d.y - py);
-          hover = Math.max(0, 1 - hd / cfg.hoverRadius) * cfg.hoverBoost;
+          const hd = Math.hypot(p.sx - px, p.sy - py);
+          level += Math.max(0, 1 - hd / cfg.hoverRadius) * cfg.hoverBoost;
         }
-
-        // Combine: noise sets the light/dark base; others add on top.
-        let level = n + hot * 0.8 + sw * (cfg.pulseAlpha / (cfg.maxAlpha - cfg.minAlpha)) + hover;
         level = Math.max(0, Math.min(1, level));
 
         const alpha = cfg.minAlpha + level * (cfg.maxAlpha - cfg.minAlpha);
-        const r = cfg.dotSize + level * cfg.sizeBoost;
+        const core = cfg.dotSize + level * cfg.sizeBoost;   // bright core radius
+        const halo = core * cfg.glowScale;                  // drawn sprite radius
 
-        ctx.fillStyle = `rgba(${cfg.color}, ${alpha})`;
-        ctx.beginPath();
-        ctx.arc(d.x, d.y, r, 0, Math.PI * 2);
-        ctx.fill();
+        // Stamp the cached glow sprite, scaled to 2*halo and faded by alpha.
+        // "lighter" compositing makes overlapping stamps accumulate (bloom).
+        ctx.globalAlpha = alpha;
+        ctx.drawImage(glowSprite, p.sx - halo, p.sy - halo, halo * 2, halo * 2);
       }
-      ctx.shadowBlur = 0;
+      ctx.globalAlpha = 1;
+
+      ctx.globalCompositeOperation = "source-over";
     }
 
     // --- pointer events: hover glow follows the cursor ---
